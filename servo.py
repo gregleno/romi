@@ -2,9 +2,10 @@ import threading
 import time
 from gpiozero import PWMOutputDevice
 
+
 class Servo:
 
-    def __init__(self, pin, pwMin = .0010, pwCtr = .0015, pwMax = .0020, dir = 1):
+    def __init__(self, pin, pwMin=.0010, pwCtr=.0015, pwMax=.0020, dir=1):
 
         self.pin = pin
         self.dir = dir
@@ -19,7 +20,8 @@ class Servo:
         self.currVal = 0
         self.targetVal = 0
         self.tolerance = .01
-        self.moveTime = .3 # time to move from value of 0 to 1
+        # time to move from value of 0 to 1
+        self.moveTime = .3
         self.moving = False
 
     def center(self):
@@ -47,10 +49,10 @@ class Servo:
     def move(self, val):
         self.targetVal = val
         if not self.moving:
-            th = threading.Thread(target = self._move, args = [])
+            th = threading.Thread(target=self._move, args=[])
             th.start()
 
-    def sweep(self, sweepTime = 3):
+    def sweep(self, sweepTime=3):
         from math import sin, pi
         for step in range(361):
             self.move(sin(2 * pi * step / 360))

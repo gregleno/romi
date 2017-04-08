@@ -1,18 +1,15 @@
-##  RPB202 program template
+# RPB202 program template
 
-##  Import libraries
+# Import libraries
 import sys
-sys.path.append('../')
 import robotbuilder
+sys.path.append('../')
 
-##  Create Robot object instance
+# Create Robot object instance
 rpb202 = robotbuilder.build()
 
 try:
-
-    ##  Add main program here
-    
-    
+    print "Add main program here"
 except KeyboardInterrupt:
     print "Keyboard Interrupt"
     rpb202.stop()

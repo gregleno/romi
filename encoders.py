@@ -16,17 +16,17 @@ class Encoders:
         diffLeft = (countLeft - self.lastCountLeft) % 0x10000
         if diffLeft >= 0x8000:
             diffLeft -= 0x10000
-            
+
         diffRight = (countRight - self.lastCountRight) % 0x10000
         if diffRight >= 0x8000:
             diffRight -= 0x10000
-            
+
         self.countLeft += self.countSignLeft * diffLeft
         self.countRight += self.countSignRight * diffRight
 
         self.lastCountLeft = countLeft
         self.lastCountRight = countRight
-        
+
         return self.countLeft, self.countRight
 
     def reset(self):

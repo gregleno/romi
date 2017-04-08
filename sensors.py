@@ -1,6 +1,8 @@
 # Sensor classes
 
-class SensCalPoly: # Polynomial calibration curve class
+
+# Polynomial calibration curve class
+class SensCalPoly:
 
     def __init__(self, id, signalMin, signalMax, *args):
         self.id = id
@@ -32,6 +34,7 @@ class SensCalPoly: # Polynomial calibration curve class
         else:
             return -1
 
+
 class ADistSens:
 
     def __init__(self, id, analog, aPin, calObj):
@@ -52,6 +55,7 @@ class ADistSens:
             return True
         else:
             return False
+
 
 class DProxSens:
 

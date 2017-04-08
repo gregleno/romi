@@ -5,6 +5,7 @@ from motors import Motors
 from odometer import Odometer
 from pantilt import PanTilt
 
+
 class Robot:
 
     def __init__(self):
@@ -41,7 +42,7 @@ class Robot:
         self.motors.turn(rotSpeed)
 
     def move(self, speed, rotSpeed):
-        self.motors.cmd(speed - rotSpeed, speed + rotSpeed) 
+        self.motors.cmd(speed - rotSpeed, speed + rotSpeed)
 
     def stop(self):
         self.motionCtrl.stop()
@@ -49,4 +50,3 @@ class Robot:
     def kill(self):
         self.stop()
         self.motionCtrl.kill()
-        

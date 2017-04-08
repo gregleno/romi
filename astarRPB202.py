@@ -3,57 +3,58 @@ import smbus
 import struct
 import time
 
+
 class AStar(object):
-  def __init__(self):
-    self.bus = smbus.SMBus(1)
+    def __init__(self):
+        self.bus = smbus.SMBus(1)
 
-  def read_unpack(self, address, size, format):
-    # Ideally we could do this:
-    #    byte_list = self.bus.read_i2c_block_data(20, address, size)
-    # But the AVR's TWI module can't handle a quick write->read transition,
-    # since the STOP interrupt will occasionally happen after the START
-    # condition, and the TWI module is disabled until the interrupt can
-    # be processed.
+    def read_unpack(self, address, size, format):
+        # Ideally we could do this:
+        #    byte_list = self.bus.read_i2c_block_data(20, address, size)
+        # But the AVR's TWI module can't handle a quick write->read transition,
+        # since the STOP interrupt will occasionally happen after the START
+        # condition, and the TWI module is disabled until the interrupt can
+        # be processed.
 
-    self.bus.write_byte(20,address)
-    time.sleep(.0001)
-    byte_list = []
-    for n in range(0,size):
-      byte_list.append(self.bus.read_byte(20))
-    return struct.unpack(format,bytes(bytearray(byte_list)))
+        self.bus.write_byte(20, address)
+        time.sleep(.0001)
+        byte_list = []
+        for n in range(0, size):
+            byte_list.append(self.bus.read_byte(20))
+        return struct.unpack(format, bytes(bytearray(byte_list)))
 
-  def write_pack(self, address, format, *data):
-    data_array = map(ord, list(struct.pack(format, *data)))
-    self.bus.write_i2c_block_data(20, address, data_array)
-    time.sleep(.0001)
+    def write_pack(self, address, format, *data):
+        data_array = map(ord, list(struct.pack(format, *data)))
+        self.bus.write_i2c_block_data(20, address, data_array)
+        time.sleep(.0001)
 
-  def leds(self, red, yellow, green):
-    self.write_pack(0, 'BBB', red, yellow, green)
+    def leds(self, red, yellow, green):
+        self.write_pack(0, 'BBB', red, yellow, green)
 
-  def play_notes(self, notes):
-    self.write_pack(29, 'B15s', 1, notes.encode("ascii"))
+    def play_notes(self, notes):
+        self.write_pack(29, 'B15s', 1, notes.encode("ascii"))
 
-  def motors(self, left, right):
-    self.write_pack(6, 'hh', left, right)
+    def motors(self, left, right):
+        self.write_pack(6, 'hh', left, right)
 
-  def read_buttons(self):
-    return self.read_unpack(3, 3, "???")
+    def read_buttons(self):
+        return self.read_unpack(3, 3, "???")
 
-  def read_battery_millivolts(self):
-    return self.read_unpack(10, 2, "H")
+    def read_battery_millivolts(self):
+        return self.read_unpack(10, 2, "H")
 
-  def read_analog(self):
-    return self.read_unpack(12, 12, "HHHHHH")
-	
-  def read_encoders(self):
-    return self.read_unpack(25, 4, "hh")
+    def read_analog(self):
+        return self.read_unpack(12, 12, "HHHHHH")
 
-  def reset_encoders(self):
-    self.write_pack(24, 'B', 1)
+    def read_encoders(self):
+        return self.read_unpack(25, 4, "hh")
 
-  def test_read8(self):
-    self.read_unpack(0, 8, 'cccccccc')
+    def reset_encoders(self):
+        self.write_pack(24, 'B', 1)
 
-  def test_write8(self):
-    self.bus.write_i2c_block_data(20, 0, [0,0,0,0,0,0,0,0])
-    time.sleep(.0001)
+    def test_read8(self):
+        self.read_unpack(0, 8, 'cccccccc')
+
+    def test_write8(self):
+        self.bus.write_i2c_block_data(20, 0, [0, 0, 0, 0, 0, 0, 0, 0])
+        time.sleep(.0001)

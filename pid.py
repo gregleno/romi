@@ -1,8 +1,9 @@
 import numpy as np
 
+
 class PID:
 
-    def __init__(self, Kp = 1, Ki = 0, Kd = 0):
+    def __init__(self, Kp=1, Ki=0, Kd=0):
 
         self.Kp = Kp
         self.Ki = Ki
@@ -17,10 +18,9 @@ class PID:
         self.medianFilter = False
         self.derivativeOnPV = False
 
-        
-    def getOutput(self, setPoint, procVar, step = 1):
-
-        step = float(step) # Avoid integer division in python 2.7...
+    def getOutput(self, setPoint, procVar, step=1):
+        # Avoid integer division in python 2.7...
+        step = float(step)
 
         filtProcVar = np.median([self.prevProcVar, procVar])
 
@@ -32,7 +32,7 @@ class PID:
             if self.derivativeOnPV:
                 self.errorDer = (filtProcVar - self.prevFiltProcVar) / step
             else:
-                self.errorDer = (self.error - self.prevError) / step          
+                self.errorDer = (self.error - self.prevError) / step
 
         else:
 
@@ -49,7 +49,7 @@ class PID:
         self.prevFiltProcVar = filtProcVar
 
         return self.Kp * self.error + self.Ki * self.errorInt + self.Kd * self.errorDer
-        
+
     def getError(self):
         return self.error
 
@@ -61,7 +61,7 @@ class PID:
         self.prevProcVar = 0
         self.prevFiltProcVar = 0
 
-    def setKs(self, Kp, Ki = 0, Kd = 0):
+    def setKs(self, Kp, Ki=0, Kd=0):
         self.Kp = Kp
         self.Ki = Ki
         self.Kd = Kd

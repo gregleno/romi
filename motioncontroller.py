@@ -7,7 +7,7 @@ from pid import PID
 
 class MotionController:
 
-    def __init__(self, odometer, motors, timeStep = .02):
+    def __init__(self, odometer, motors, timeStep=.02):
         self.timeStep = timeStep
         self.odometer = odometer
         self.odometer.timeStep = self.timeStep
@@ -17,13 +17,9 @@ class MotionController:
         self.targetOmega = 0
         self.mode = "STOPPED"
         self.run()
-        
-########################################################################
-##  Movement control methods
-########################################################################
-        
+
     # Serial; Method will execute until the target distance is reached
-    def forwardDist(self, speed, distTarget, stop = True, decel = False):
+    def forwardDist(self, speed, distTarget, stop=True, decel=False):
         phi0 = self.odometer.getPhi()
         x0, y0 = self.odometer.getPosXY()
         dist = 0
@@ -44,7 +40,7 @@ class MotionController:
                 dist = sqrt((x1 - x0)**2 + (y1 - y0)**2)
         if stop:
             self.stop()
-        
+
     # In-loop; Need to call this method within a loop with a short time step
     # in order for the PID to adjust the turn rate (targetOmega).
     def forwardAngle(self, speed, angleTarget):
@@ -55,7 +51,7 @@ class MotionController:
     # Same as setSpeed method. Kept for backward compatibility
     def move(self, v, omega):
         self.setSpeed(v, omega)
-        
+
     # Sets the target forward & rotational speeds (v & omega)
     def setSpeed(self, v, omega):
         self.targetV = v
@@ -68,12 +64,12 @@ class MotionController:
         self.motors.stop()
 
     # Serial; Method will execute until the target turn angle is achieved
-    def turnAngle(self, angleTarget, omega = pi):
+    def turnAngle(self, angleTarget, omega=pi):
         phi0 = self.odometer.getPhi()
         self.turnToAngle(phi0 + angleTarget, omega)
 
     # Serial; Method will execute until the target angle is reached
-    def turnToAngle(self, angleTarget, omega = pi):
+    def turnToAngle(self, angleTarget, omega=pi):
         self.setMode('TURN')
         self.targetV = 0
         self.targetOmega = 0
@@ -92,10 +88,6 @@ class MotionController:
                 self.targetOmega = -omegaMin
             loopTimer.sleepToElapsed(self.timeStep)
         self.stop()
-
-########################################################################
-##  Other methods
-########################################################################
 
     # Kill thread running ._move() method
     def kill(self):
@@ -122,10 +114,10 @@ class MotionController:
     # Starts the ._run() method in a thread
     def run(self):
         self.active = True
-        th = threading.Thread(target = self._run, args = [])
+        th = threading.Thread(target=self._run, args=[])
         th.start()
 
-    # Sets the omegaPID constants for specific movement modes               
+    # Sets the omegaPID constants for specific movement modes
     def setMode(self, mode):
         if self.mode != mode:
             self.mode = mode

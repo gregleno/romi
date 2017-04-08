@@ -4,6 +4,7 @@ import time
 import SimpleCV
 import timer
 
+
 class Camera:
 
     def __init__(self):
@@ -21,27 +22,28 @@ class Camera:
 
             t0 = time.time()
 
-            img = self.camera.getImage()   
+            img = self.camera.getImage()
 
             topCropH = 60
-            img = img.resize(w = 200)
+            img = img.resize(w=200)
             img = img.crop(0, topCropH, img.width, img.height - topCropH)
             img.show()
 
             dt = time.time() - t0
             if dt < 1 / freq:
-                time.sleep(1 / freq -dt)
+                time.sleep(1 / freq - dt)
 
-    def show(self, freq = 20):
-        th = threading.Thread(target = self._show, args = [freq])
+    def show(self, freq=20):
+        th = threading.Thread(target=self._show, args=[freq])
         th.start()
 
     def stop(self):
         self.display = False
 
+
 class LineTracker:
 
-    def __init__(self, camera, display = False):
+    def __init__(self, camera, display=False):
         self.camera = camera
         self.display = display
         self.active = False
@@ -60,19 +62,20 @@ class LineTracker:
 
             img = self.camera.getImage()
 
-##          Resize and crop image (crop values pixel values apply before resize)
+            # Resize and crop image (crop values pixel values apply before resize)
             topCrop = 256
             botCrop = 0
             leftCrop = 0
             rightCrop = 0
-            img = img.crop(leftCrop, topCrop, img.width - leftCrop - rightCrop, img.height - topCrop - botCrop)
-            img = img.resize(w = 200)
+            img = img.crop(leftCrop, topCrop, img.width - leftCrop - rightCrop,
+                           img.height - topCrop - botCrop)
+            img = img.resize(w=200)
 
-##          Isolate path lines (green masking tape)
-            iCol = img.hueDistance(color = (40, 156, 100), minsaturation = 120)
+            # Isolate path lines (green masking tape)
+            iCol = img.hueDistance(color=(40, 156, 100), minsaturation=120)
             iBin = iCol.binarize()
 
-##          Mask center of image with black box
+            # Mask center of image with black box
             contWidth = 16
             dl = iBin.dl()
             size = (iBin.width - contWidth, iBin.height - contWidth)
@@ -81,28 +84,26 @@ class LineTracker:
             iBox = iBin.applyLayers()
             iBoxContArea = float(iBox.area() - size[0] * size[1])
 
-##          Find blobs
-            self.lines = iBox.findBlobs(minsize = 20)
+            self.lines = iBox.findBlobs(minsize=20)
 
-##          Define specific locations for distance calculations
+            # Define specific locations for distance calculations
             topCtr = (iBox.width / 2, 0)
             btmCtr = (iBox.width / 2, iBox.height)
             ctrLeft = (0, iBox.height / 2)
             ctrRight = (iBox.width, iBox.height / 2)
 
-##          Process line blobs 
             if self.lines is not None:
                 self.nbLines = self.lines.count()
-##              Find line blob at bottom center        
+                # Find line blob at bottom center
                 self.lines = self.lines.sortDistance(btmCtr)
                 btmLine = self.lines[0]
                 if self.nbLines > 1:
-##                  Remove bottom line blob from blobs
+                    # Remove bottom line blob from blobs
                     self.lines.__delitem__(0)
-##                  Sort remaining line blobs from left to right
+                    # Sort remaining line blobs from left to right
                     self.lines = self.lines.sortX()
 
-##                  For each remaining line, get and store HPos and Area
+                    # For each remaining line, get and store HPos and Area
                     self.linesHPos = []
                     self.linesAreaRatio = []
                     for i in range(len(self.lines)):
@@ -111,7 +112,7 @@ class LineTracker:
                         area = self.lines[i].area()
                         self.linesAreaRatio.append(self.lines[i].area() / iBoxContArea)
 
-##                  Re-insert bottom line blob at index 0
+                    # Re-insert bottom line blob at index 0
                     self.lines.insert(0, btmLine)
                     x, y = btmLine.centroid()
                     self.linesHPos.insert(0, (iBox.width / 2 - x) / (iBox.width / 2))
@@ -125,33 +126,32 @@ class LineTracker:
                 self.linesAreaRatio = []
                 btmLine = None
                 topLine = None
-                
-##          Display processed line blobs
-            if self.display :
+
+            # Display processed line blobs
+            if self.display:
                 dl = img.dl()
                 if self.nbLines != 0:
                     if self.nbLines == 2:
                         topLine = self.lines[1]
-                        topLine.draw(layer = dl, color = SimpleCV.Color.LIME, width = -1)
+                        topLine.draw(layer=dl, color=SimpleCV.Color.LIME, width=-1)
                     elif self.nbLines > 2:
                         for line in self.lines:
-                            line.draw(layer = dl, color = SimpleCV.Color.GOLD, width = -1)
-                    btmLine.draw(layer = dl, color = SimpleCV.Color.HOTPINK, width = -1)
+                            line.draw(layer=dl, color=SimpleCV.Color.GOLD, width=-1)
+                    btmLine.draw(layer=dl, color=SimpleCV.Color.HOTPINK, width=-1)
                     img.applyLayers().show()
                 else:
                     img.show()
 
-
             dt = time.time() - t0
             if dt < 1. / freq:
-                time.sleep(1. / freq -dt)
+                time.sleep(1. / freq - dt)
 
-    def trackLines(self, freq = 10):
-        th = threading.Thread(target = self._trackLines, args = [freq])
+    def trackLines(self, freq=10):
+        th = threading.Thread(target=self._trackLines, args=[freq])
         th.start()
 
-####    Change to stock actual frame x & y for blobs centroids and use get
-####    functions to return HPos in relation to frame center
+    # Change to stock actual frame x & y for blobs centroids and use get
+    # functions to return HPos in relation to frame center
 
     def stop(self):
         self.active = False
@@ -184,11 +184,10 @@ class LineTracker:
         else:
             return False
 
-##  Add get methods for lines, linesHPos & linesAreaRatio
 
 class LineTrackerBox:
 
-    def __init__(self, camera, display = False):
+    def __init__(self, camera, display=False):
         self.camera = camera
         self.active = False
         self.btm = False
@@ -199,7 +198,7 @@ class LineTrackerBox:
         self.left = False
         self.right = False
         self.intersection = []
-        
+
     def _trackLines(self, freq):
 
         self.active = True
@@ -208,31 +207,32 @@ class LineTrackerBox:
         while self.active:
 
             img = self.camera.getImage()
-    
-            ##  Resize and crop image (crop values pixel values apply before resize)
+
+            # Resize and crop image (crop values pixel values apply before resize)
             topCrop = 256
             botCrop = 0
             leftCrop = 0
             rightCrop = 0
-            ## Crop before resize to avoid SimpleCV bug
-            img = img.crop(leftCrop, topCrop, img.width - leftCrop - rightCrop, img.height - topCrop - botCrop)
-            img = img.resize(w = 256)
+            # Crop before resize to avoid SimpleCV bug
+            img = img.crop(leftCrop, topCrop, img.width - leftCrop - rightCrop,
+                           img.height - topCrop - botCrop)
+            img = img.resize(w=256)
 
-            ##  Isolate path lines (green masking tape)
-            iBin = img.hueDistance(color = (40, 156, 100), minsaturation = 120).binarize()
+            # Isolate path lines (green masking tape)
+            iBin = img.hueDistance(color=(40, 156, 100), minsaturation=120).binarize()
 
-            ##  Isolate zone images
+            # Isolate zone images
             cWidth = 8
             imgTop = iBin.crop((cWidth, 0), (img.width - cWidth, cWidth))
             imgBtm = iBin.crop((0, img.height - cWidth), (img.width, img.height))
             imgLeft = iBin.crop((0, 0), (cWidth, img.height - cWidth))
             imgRight = iBin.crop((img.width - cWidth, 0), (img.width, img.height - cWidth))
 
-            ##  Reset intersection configuration
+            # Reset intersection configuration
             intersection = 0
 
-            ##  Analyse bottom image
-            blobsBtm = imgBtm.findBlobs(minsize = 20)
+            # Analyse bottom image
+            blobsBtm = imgBtm.findBlobs(minsize=20)
             if blobsBtm is not None:
                 blobsBtm = blobsBtm.sortArea()
                 self.btm = True
@@ -244,8 +244,8 @@ class LineTrackerBox:
                 self.btmHPos = []
                 self.btmAreaRatio = []
 
-            ## Analyse top image
-            blobsTop = imgTop.findBlobs(minsize = 20)
+            # Analyse top image
+            blobsTop = imgTop.findBlobs(minsize=20)
             if blobsTop is not None:
                 blobsTop = blobsTop.sortArea()
                 self.top = True
@@ -255,17 +255,16 @@ class LineTrackerBox:
                 self.top = False
                 self.topAreaRatio = []
 
-
-            ## Analyse left image
-            blobsLeft = imgLeft.findBlobs(minsize = 20)
+            # Analyse left image
+            blobsLeft = imgLeft.findBlobs(minsize=20)
             if blobsLeft is not None:
                 self.left = True
                 intersection += 1
             else:
                 self.left = False
 
-            ## Analyse right image
-            blobsRight = imgRight.findBlobs(minsize = 20)
+            # Analyse right image
+            blobsRight = imgRight.findBlobs(minsize=20)
             if blobsRight is not None:
                 self.Right = True
                 intersection += 4
@@ -275,7 +274,6 @@ class LineTrackerBox:
             blobs = iBin.findBlobs()
             if blobs is not None:
                 blobs = blobs.sortArea()
-#                print blobs[0].area() / iBin.area()
                 if (blobs[0].area() / iBin.area()) > .5:
                     intersection = 8
 
@@ -283,8 +281,8 @@ class LineTrackerBox:
 
             lTimer.sleepToElapsed(1. / freq)
 
-    def trackLines(self, freq = 20):
-        th = threading.Thread(target = self._trackLines, args = [freq])
+    def trackLines(self, freq=20):
+        th = threading.Thread(target=self._trackLines, args=[freq])
         th.start()
 
     def stop(self):
@@ -315,11 +313,11 @@ class LineTrackerBox:
             return self.intersection
         else:
             return -1
-        
+
 
 class ObjTracker:
 
-    def __init__(self, camera, display = False):
+    def __init__(self, camera, display=False):
         self.camera = camera
         self.display = display
         self.active = False
@@ -330,19 +328,19 @@ class ObjTracker:
     def _trackObjByHue(self, hue, freq):
 
         self.active = True
-        
+
         while self.active:
 
             t0 = time.time()
-            
-            img = self.camera.getImage()   
+
+            img = self.camera.getImage()
 
             topCropH = 60
-            img = img.resize(w = 200)
+            img = img.resize(w=200)
             img = img.crop(0, topCropH, img.width, img.height - topCropH)
 
             col = SimpleCV.Color.hueToBGR(hue)
-            iBin = img.hueDistance(color = col, minsaturation = 120).binarize(50)
+            iBin = img.hueDistance(color=col, minsaturation=120).binarize(50)
 
             blobs = iBin.findBlobs()
 
@@ -355,7 +353,7 @@ class ObjTracker:
                 self.objAreaRatio = obj.area() / img.area()
                 if self.display:
                     dl = img.dl()
-                    obj.drawRect(layer = dl, color = (0, 255, 0), width = 2)
+                    obj.drawRect(layer=dl, color=(0, 255, 0), width=2)
             else:
                 self.nbObj = 0
                 self.objHPos = []
@@ -366,10 +364,10 @@ class ObjTracker:
 
             dt = time.time() - t0
             if dt < 1. / freq:
-                time.sleep(1. / freq -dt)
+                time.sleep(1. / freq - dt)
 
-    def trackObjByHue(self, hue, freq = 10):
-        th = threading.Thread(target = self._trackObjByHue, args = (hue, freq))
+    def trackObjByHue(self, hue, freq=10):
+        th = threading.Thread(target=self._trackObjByHue, args=(hue, freq))
         th.start()
 
     def stop(self):

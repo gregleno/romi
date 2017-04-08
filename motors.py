@@ -1,6 +1,7 @@
 from pid import PID
 from encoders import Encoders
 
+
 class Motors:
 
     def __init__(self, aStar, encoders, odometer):
@@ -12,11 +13,12 @@ class Motors:
         self.dirL = 1 * self.trimL
         self.dirR = 1 * self.trimR
         self.maxCmd = 400
-        self.pidL = PID(.7, 5)#PID(.25, 4)#PID(.7, 6)
-        self.pidR = PID(.7, 5)#PID(.25, 4)#PID(.7, 5.5)
-        self.speedCst = 900. # Approximate speed (in mm/s) for unit command
+        self.pidL = PID(.7, 5)
+        self.pidR = PID(.7, 5)
 
-        
+        # Approximate speed (in mm/s) for unit command
+        self.speedCst = 900.
+
     # In-loop; This method is designed to be called within a loop with a short time step
     # Odometer.update() needs to be called in the loop to read the encoders counts. To
     # use this method independent from the odometer, change self.encoder.getCounts()
@@ -44,9 +46,8 @@ class Motors:
         # Ensure faster stop
         if speedTargetL == 0 and speedTargetR == 0:
             cmdL, cmdR = 0, 0
-        
-        self.aStar.motors(cmdL * self.dirL * self.maxCmd, cmdR * self.dirR * self.maxCmd)
 
+        self.aStar.motors(cmdL * self.dirL * self.maxCmd, cmdR * self.dirR * self.maxCmd)
 
     # In-loop; This method is to be called from within a loop.
     # cmd arguments are the motor speed commands ranging from -1 to 1 (-max to max speed)
@@ -67,7 +68,6 @@ class Motors:
     def forward(self, cmd):
         self.aStar.motors(cmd * self.dirL * self.maxCmd, cmd * self.dirR * self.maxCmd)
 
-        
     def turn(self, rotCmd):
         self.aStar.motors(-rotCmd * self.dirL * self.maxCmd, rotCmd * self.dirR * self.maxCmd)
 
@@ -78,5 +78,3 @@ class Motors:
     def stop(self):
         self.aStar.motors(0, 0)
         self.reset()
-        
-        

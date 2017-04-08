@@ -4,8 +4,9 @@ import numpy as np
 from picamera import PiCamera, PiCameraCircularIO
 from SimpleCV import Image, ColorSpace
 
+
 class Camera():
-    
+
     def __init__(self, size=1, frameRate=40, hflip=False, vflip=False):
         self.active = False
         self.size = size
@@ -25,18 +26,18 @@ class Camera():
         self.picam.close()
 
     def doWitheBalance(self, awbFilename='awb_gains.txt', mode='auto'):
-        ##  Set AWB mode for calibration
+        # Set AWB mode for calibration
         self.picam.awb_mode = mode
         print 'Calibrating white balance gains...'
         time.sleep(1)
-        ##  Read AWB gains
+        # Read AWB gains
         gains = self.picam.awb_gains
-        ##  Set AWB mode to off (manual)
+        # Set AWB mode to off (manual)
         self.picam.awb_mode = 'off'
-        ##  Set AWB gains to remain constant
+        # Set AWB gains to remain constant
         self.picam.awb_gains = gains
 
-        ##  Write AWB gains to file
+        # Write AWB gains to file
         gRed = float(gains[0])
         gBlue = float(gains[1])
         f = open(awbFilename, 'w')
@@ -62,14 +63,14 @@ class Camera():
         return img
 
     def readWhiteBalance(self, awbFilename='awb_gains.txt'):
-        ##  Read AWB gains from file
+        # Read AWB gains from file
         f = open(awbFilename, 'r')
         line = f.readline()
         f.close()
         gRed, gBlue = [float(g) for g in line.split(', ')]
-        ##  Set AWB mode to off (manual)
+        # Set AWB mode to off (manual)
         self.picam.awb_mode = 'off'
-        ##  Set AWB gains to remain constant
+        # Set AWB gains to remain constant
         self.picam.awb_gains = gRed, gBlue
         print 'AWB gains set to:', gRed, gBlue
 
@@ -78,7 +79,7 @@ class Camera():
             self.active = True
             self.picam.start_recording(self.stream, format='h264',
                                        resize=(self.hRes, self.vRes))
-            
+
     def startPreview(self):
         self.picam.start_preview()
 

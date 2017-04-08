@@ -1,10 +1,12 @@
 import time
 from math import pi, cos, sin
 
+
 # Function boundAngle(angle) takes any angle as "angle" and returns the
 # equivalent angle bound within 0 <= angle < 2 * Pi
 def boundAngle(angle):
     return angle % (2 * pi)
+
 
 # Function relativeAngle(angleRef, angle) returns the shortest relative
 # angle from a reference angle "angleRef" to an angle "angle". The retuned
@@ -21,15 +23,17 @@ def relativeAngle(angleRef, angle):
         relativeAngle = angle - angleRef
 
     return relativeAngle
-    
+
 
 class Odometer:
 
-    def __init__(self, encoders, timeStep = .02):
+    def __init__(self, encoders, timeStep=.02):
         self.encoders = encoders
         self.timeStep = timeStep
-        self.track = 142.5 # width between wheels in millimeters
-        self.tickDist = .152505 # Distance travelled for per encoder click in millimeters
+        # width between wheels in millimeters
+        self.track = 142.5
+        # Distance travelled for per encoder click in millimeters
+        self.tickDist = .152505
         self.lastCountLeft = 0
         self.lastCountRight = 0
         self.speedL = 0
@@ -53,13 +57,13 @@ class Odometer:
         distRight = deltaCountRight * self.tickDist
         distCenter = (distLeft + distRight) / 2.
         self.dist += distCenter
-        
+
         self.x += distCenter * cos(self.phi)
         self.y += distCenter * sin(self.phi)
 
         deltaPhi = (distRight - distLeft) / self.track
         self.phi = boundAngle(self.phi + deltaPhi)
-       
+
         self.speedL = distLeft / self.timeStep
         self.speedR = distRight / self.timeStep
         self.v = distCenter / self.timeStep

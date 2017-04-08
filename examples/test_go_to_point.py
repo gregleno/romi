@@ -1,24 +1,25 @@
-##  Test "Go-To Point" function to be implemented in a future "Navigator" class
+# Test "Go-To Point" function to be implemented in a future "Navigator" class
 
-##  Import libraries
+# Import libraries
 import sys
-sys.path.append('../')
 import robotbuilder
 
-##  Specific libraries to be imported in class:
+# Specific libraries to be imported in class:
 import numpy as np
 from math import atan2, pi, sqrt
 from timer import Timer
+sys.path.append('../')
 
-##  Create Robot object instance
+# Create Robot object instance
 rpb202 = robotbuilder.build()
 
 tStep = .02
 
+
 def goToPoint(point, speed):
     lt = Timer()
     angle, dist = angleDistToPoint(point)
-    #print angle, dist
+    # print angle, dist
     rpb202.motionCtrl.turnToAngle(angle)
     while dist > 100:
         rpb202.motionCtrl.forwardAngle(speed, angle)
@@ -28,6 +29,7 @@ def goToPoint(point, speed):
     rpb202.stop()
     print rpb202.odometer.getPosXY()
 
+
 def angleDistToPoint(point):
     position = np.array(rpb202.odometer.getPosXY())
     dx, dy = point - position
@@ -36,16 +38,13 @@ def angleDistToPoint(point):
     return angle, dist
 
 try:
-
     points = [(1000, 400), (1800, -800), (2400, 500), (0, 0)]
     for point in points:
         print "Point suivant:", point
         goToPoint(point, 200)
     print rpb202.odometer.getPosXY()
     print rpb202.odometer.dist
-    
-    
-    
+
 except KeyboardInterrupt:
     print "Keyboard Interrupt"
     rpb202.stop()

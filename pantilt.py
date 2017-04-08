@@ -1,5 +1,6 @@
 from servo import Servo
 
+
 class PanTilt:
 
     def __init__(self, panPin, tiltPin):
@@ -16,7 +17,7 @@ class PanTilt:
 
     def down(self):
         self.setPanTilt(0, -1)
-        
+
     def setPanTilt(self, pan, tilt):
         self.pan.move(pan)
         self.tilt.move(tilt)
@@ -24,7 +25,3 @@ class PanTilt:
     def sweep(self):
         self.pan.sweep()
         self.tilt.sweep()
-
-
-
-

@@ -1,5 +1,6 @@
 import time
 
+
 # A simple, multi-purpose timer class to manage time steps in loops, control execution times, etc.
 class Timer:
 
@@ -9,7 +10,6 @@ class Timer:
         self.pauseInitTime = []
         self.pauseElapsed = 0
         self.initTime = time.time()
-
 
     # Method resets the timer initial time to current time
     def reset(self):
