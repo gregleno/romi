@@ -3,7 +3,6 @@ from encoders import Encoders
 from motioncontroller import MotionController
 from motors import Motors
 from odometer import Odometer
-from pantilt import PanTilt
 
 
 class Robot:
@@ -18,7 +17,6 @@ class Robot:
         self.buttons = []
         self.analog = [0, 0, 0, 0, 0, 0]
         self.camera = []
-        self.panTilt = PanTilt(12, 13)
 
     def addSensor(self, sensorObj):
         self.sensors.append(sensorObj)
