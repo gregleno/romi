@@ -1,10 +1,11 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 
 import logging
 from systemd.journal import JournalHandler
 import time
 from time import sleep
 from a_star import AStar
+from wiiremote import WiiRemote
 import os
 
 
@@ -23,17 +24,21 @@ def play_welcome_message():
                )
     for leds in pattern:
         a_star.leds(*leds)
-        sleep(0.5)
+        sleep(0.2)
 
 
 try:
     a_star = AStar()
     log = logging.getLogger('romi')
     log.addHandler(JournalHandler())
+    ch = logging.StreamHandler()
+    log.addHandler(ch)
+
     log.setLevel(logging.INFO)
     log.info("romi start")
 
     connection_error_printed = False
+    wiimote = None
     while True:
         try:
             play_welcome_message()
@@ -48,6 +53,17 @@ try:
                 if buttonA and buttonB:
                     log.info("Restarting raspberry")
                     os.system("sudo reboot")
+                if buttonA:
+                    if wiimote is not None:
+                        log.info("Releasing wiimote")
+                        wiimote.release()
+                        wiimote = None
+                    else:
+                        log.info("Connecting to wiimote")
+                        wiimote = WiiRemote.connect()
+                        if wiimote is not None:
+                            log.info("Connected to wiimote")
+
                 sleep(1)
         except IOError as e:
             if not connection_error_printed:

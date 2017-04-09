@@ -1,6 +1,6 @@
 # sudo cp robot.service /lib/systemd/system/robot.service
 # sudo chmod 644 /lib/systemd/system/robot.service
-# cp robot-service.py cp robot-service.py a_star.py /home/ubuntu/robot/
+# cp  robot-service.py a_star.py wiiremote.py /home/ubuntu/robot/
 
 # sudo systemctl daemon-reload
 # sudo systemctl enable robot.service
@@ -24,7 +24,7 @@ After=multi-user.target
 
 [Service]
 Type=simple
-ExecStart=/usr/bin/python3 /home/ubuntu/robot/robot-service.py
+ExecStart=/usr/bin/python /home/ubuntu/robot/robot-service.py
 Restart=on-abort
 
 [Install]

@@ -1,12 +1,12 @@
-# -*- coding: utf-8 -*-
 import cwiid
 import threading
 import time
+import logging
 
 
 class WiiRemote:
 
-    def __init__(self, n):
+    def __init__(self, wm):
         self.btn1 = False
         self.btn2 = False
         self.btnA = False
@@ -17,30 +17,33 @@ class WiiRemote:
         self.btnDown = False
         self.btnLeft = False
         self.btnRight = False
-        self.id = id
         self.active = True
-        self.wm = None
+        self.wm = wm
         self.stickH = 0
         self.stickV = 0
 
-        # Connection à la manette Wii
-        print "Simultaneously press Wii remote buttons 1 and 2 now"
+    @staticmethod
+    def connect():
+        log = logging.getLogger('romi')
+        log.info("Simultaneously press Wii remote buttons 1 and 2 now")
         i = 1
-        while not self.wm:
+        wm = None
+        while wm is None:
             try:
-                self.wm = cwiid.Wiimote()
+                wm = cwiid.Wiimote()
             except RuntimeError:
                 if i > 10:
-                    quit()
                     break
-                print "Failed to connect to Wii remote"
-                print "Tentative " + str(i)
                 i += 1
-        print "Wii remote successfully connected"
-        self.wm.led = n
-        self.wm.rumble = True
-        time.sleep(.2)
-        self.wm.rumble = False
+                log.info("Failed to connect to Wii remote")
+        if wm is not None:
+            log.info("Wii remote successfully connected")
+            wm.rumble = True
+            time.sleep(.2)
+            wm.rumble = False
+            return WiiRemote(wm)
+        else:
+            return None
 
     def _robotRemote(self, freq):
 
@@ -74,13 +77,11 @@ class WiiRemote:
 
     def _release(self):
         self.active = False
-        print "Disconnecting Wii remote\n"
         self.wm.rumble = True
         time.sleep(.2)
         self.wm.rumble = False
-        self.wm.led = 0
 
-    def robotRemote(self, freq):
+    def monitor(self, freq):
         thread1 = threading.Thread(target=self._robotRemote, args=[freq])
         thread1.start()
 
