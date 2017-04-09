@@ -1,0 +1,31 @@
+# sudo cp robot.service /lib/systemd/system/robot.service
+# sudo chmod 644 /lib/systemd/system/robot.service
+# cp robot-service.py cp robot-service.py a_star.py /home/ubuntu/robot/
+
+# sudo systemctl daemon-reload
+# sudo systemctl enable robot.service
+# sudo systemctl start robot.service
+#
+# Check status
+# sudo systemctl status robot.service
+
+# Start service
+# sudo systemctl start robot.service
+
+# Stop service
+# sudo systemctl stop robot.service
+
+# Check service's log
+# sudo journalctl -f -u robot.service
+
+[Unit]
+Description=Robot Service
+After=multi-user.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/python3 /home/ubuntu/robot/robot-service.py
+Restart=on-abort
+
+[Install]
+WantedBy=multi-user.target
