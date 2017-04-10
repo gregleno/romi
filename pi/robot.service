@@ -1,6 +1,6 @@
 # sudo cp robot.service /lib/systemd/system/robot.service
 # sudo chmod 644 /lib/systemd/system/robot.service
-# cp  robot-service.py a_star.py wiiremote.py /home/ubuntu/robot/
+# cp  robot-service.py a_star.py wiiremote.py robot_controler.py /home/ubuntu/robot/
 
 # sudo systemctl daemon-reload
 # sudo systemctl enable robot.service

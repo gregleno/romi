@@ -7,20 +7,25 @@ import logging
 class WiiRemote:
 
     def __init__(self, wm):
-        self.btn1 = False
-        self.btn2 = False
-        self.btnA = False
-        self.btnB = False
-        self.btnC = False
-        self.btnZ = False
-        self.btnUp = False
-        self.btnDown = False
-        self.btnLeft = False
-        self.btnRight = False
+        self.buttons = 0
+        self.nun_buttons = 0
+        self.nun_stick = (0, 0)
         self.active = True
+        self.buttons_cb = None
+        self.nun_buttons_cb = None
+        self.nun_stick_cb = None
         self.wm = wm
-        self.stickH = 0
-        self.stickV = 0
+        self.led = 0
+
+    def set_callbacks(self, buttons_cb, nun_buttons_cb, nun_stick_cb):
+        self.buttons_cb = buttons_cb
+        self.nun_buttons_cb = nun_buttons_cb
+        self.nun_stick_cb = nun_stick_cb
+
+    def remove_callbacks(self):
+        self.buttons_cb = None
+        self.nun_buttons_cb = None
+        self.nun_stick_cb = None
 
     @staticmethod
     def connect():
@@ -45,35 +50,34 @@ class WiiRemote:
         else:
             return None
 
-    def _robotRemote(self, freq):
+    def _robot_remote(self, freq):
 
-        self.wm.rpt_mode = cwiid.RPT_BTN | cwiid.RPT_ACC | cwiid.RPT_NUNCHUK
+        self.wm.rpt_mode = cwiid.RPT_BTN | cwiid.RPT_NUNCHUK
 
-        nunHRange = 222. - 22.
-        nunHCenter = 122.
-        nunVRange = 231. - 38.
-        nunVCenter = 134.
+        self.wm.rumble = True
+        time.sleep(1)
+        self.wm.rumble = False
+        self.wm.rpt_mode = cwiid.RPT_BTN | cwiid.RPT_NUNCHUK
 
         while self.active:
+            # Todo add mutex
             buttons = self.wm.state['buttons']
-            nunAcc = self.wm.state['nunchuk']['acc']
-            nunButtons = self.wm.state['nunchuk']['buttons']
-            nunStick = self.wm.state['nunchuk']['stick']
+            nun_buttons = self.wm.state['nunchuk']['buttons']
+            nun_stick = self.wm.state['nunchuk']['stick']
 
-            nunStickH, nunStickV = nunStick
+            if buttons != self.buttons and self.buttons_cb is not None:
+                self.buttons_cb(buttons)
+            self.buttons = buttons
 
-            self.stickH = (float(nunStickH) - nunHCenter) / nunHRange
-            self.stickV = (float(nunStickV) - nunVCenter) / nunVRange
+            if nun_buttons != self.nun_buttons and self.nun_buttons_cb is not None:
+                self.nun_buttons_cb(nun_buttons)
+            self.nun_buttons = nun_buttons
 
-            if buttons & cwiid.BTN_A:
-                self.btnA = True
-            else:
-                self.btnA = False
-            if nunButtons & cwiid.NUNCHUK_BTN_Z:
-                self.btnZ = True
-            else:
-                self.btnZ = False
-            time.sleep(1 / freq)
+            if nun_stick != self.nun_stick and self.nun_stick_cb is not None:
+                self.nun_stick_cb(nun_stick)
+            self.nun_stick = nun_stick
+
+            time.sleep(1. / freq)
 
     def _release(self):
         self.active = False
@@ -82,7 +86,8 @@ class WiiRemote:
         self.wm.rumble = False
 
     def monitor(self, freq):
-        thread1 = threading.Thread(target=self._robotRemote, args=[freq])
+        self.active = True
+        thread1 = threading.Thread(target=self._robot_remote, args=[freq])
         thread1.start()
 
     def release(self):
@@ -90,8 +95,5 @@ class WiiRemote:
             thread2 = threading.Thread(target=self._release, args=[])
             thread2.start()
 
-    def setLed(self, led):
+    def set_led(self, led):
         self.wm.led = led
-
-    def getLed(self):
-        return self.wm.led

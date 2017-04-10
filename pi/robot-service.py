@@ -5,7 +5,7 @@ from systemd.journal import JournalHandler
 import time
 from time import sleep
 from a_star import AStar
-from wiiremote import WiiRemote
+from robot_controler import RobotControler
 import os
 
 NO_LED = (0, 0, 0)
@@ -28,6 +28,8 @@ def play_goodbye_message():
         a_star.leds(*leds)
         sleep(0.4)
 
+robot_controler = None
+
 try:
     a_star = AStar()
     log = logging.getLogger('romi')
@@ -39,7 +41,6 @@ try:
     log.info("romi start")
 
     connection_error_printed = False
-    wiimote = None
     cont = True
     while cont:
         try:
@@ -60,19 +61,13 @@ try:
                     os.system("sudo reboot")
                     cont = False
                 if buttonA:
-                    if wiimote is not None:
-                        log.info("Releasing wiimote")
-                        wiimote.release()
-                        wiimote = None
+                    if robot_controler is None:
+                        log.info("Creating RobotControler")
+                        robot_controler = RobotControler()
                     else:
-                        log.info("Connecting to wiimote")
-                        pattern = (ALL_LEDS, NO_LED, ALL_LEDS, NO_LED, ALL_LEDS, NO_LED)
-                        for leds in pattern:
-                            a_star.leds(*leds)
-                            sleep(0.1)
-                        wiimote = WiiRemote.connect()
-                        if wiimote is not None:
-                            log.info("Connected to wiimote")
+                        log.info("Releasing RobotControler")
+                        robot_controler.release()
+                        robot_controler = None
 
                 sleep(1)
         except IOError as e:
@@ -87,3 +82,7 @@ except KeyboardInterrupt as e:
 except Exception as e:
     logging.error("Error happened")
     logging.error(e)
+
+if robot_controler is not None:
+    robot_controler.release()
+    logging.info("Killing robot")
