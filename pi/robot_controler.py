@@ -5,6 +5,7 @@ import logging
 from wiiremote import WiiRemote
 from a_star import AStar
 
+
 NO_LED = (0, 0, 0)
 ALL_LEDS = (1, 1, 1)
 LED1 = (1, 0, 0)
@@ -47,3 +48,11 @@ class RobotControler:
         for leds in pattern:
             self.a_star.leds(*leds)
             time.sleep(0.2)
+
+
+def main():
+    # my code here
+    RobotControler()
+
+if __name__ == "__main__":
+    main()

@@ -10,7 +10,7 @@ class WiiRemote:
         self.buttons = 0
         self.nun_buttons = 0
         self.nun_stick = (0, 0)
-        self.active = True
+        self.active = False
         self.buttons_cb = None
         self.nun_buttons_cb = None
         self.nun_stick_cb = None
@@ -50,17 +50,16 @@ class WiiRemote:
         else:
             return None
 
-    def _robot_remote(self, freq):
+    def _wiimote_thread(self, freq):
 
         self.wm.rpt_mode = cwiid.RPT_BTN | cwiid.RPT_NUNCHUK
 
         self.wm.rumble = True
-        time.sleep(1)
+        time.sleep(0.1)
         self.wm.rumble = False
         self.wm.rpt_mode = cwiid.RPT_BTN | cwiid.RPT_NUNCHUK
 
         while self.active:
-            # Todo add mutex
             buttons = self.wm.state['buttons']
             nun_buttons = self.wm.state['nunchuk']['buttons']
             nun_stick = self.wm.state['nunchuk']['stick']
@@ -82,13 +81,16 @@ class WiiRemote:
     def _release(self):
         self.active = False
         self.wm.rumble = True
-        time.sleep(.2)
+        time.sleep(.1)
         self.wm.rumble = False
 
     def monitor(self, freq):
-        self.active = True
-        thread1 = threading.Thread(target=self._robot_remote, args=[freq])
-        thread1.start()
+        if not self.active:
+            self.active = True
+            thread1 = threading.Thread(target=self._wiimote_thread, args=[freq])
+            thread1.start()
+        else:
+            raise Exception("Wiiremote already active")
 
     def release(self):
         if self.active:
