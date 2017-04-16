@@ -20,3 +20,6 @@ sudo systemctl stop robot.service
 
 # Check service's log
 sudo journalctl -f -u robot.service
+
+Robot control:
+   press wii button B and button 1 to stop:

@@ -35,7 +35,8 @@ class RobotControler:
             self.wiimote.release()
 
     def buttons_cb(self, buttons):
-        print("buttons_cb")
+        if buttons & cwiid.BTN_1 and buttons & cwiid.BTN_B:
+            self.release()
 
     def nun_buttons_cb(self, buttons):
         print("nun_buttons_cb")
