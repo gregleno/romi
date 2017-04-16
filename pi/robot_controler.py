@@ -42,6 +42,7 @@ class RobotControler:
         print("nun_buttons_cb")
 
     def nun_stick_cb(self, stick):
+        print stick
         print("nun_stick_cb")
 
     def play_welcome_message(self):
