@@ -120,8 +120,17 @@ class WiiRemote:
 
     def _start_calibration(self, stick):
         self.calibration_ongoing = True
-        print "Calibration started. Please move the nunchuck in all directions"
-        print "Press PLUS MINUS and B to complete calibration"
+        self.wm.rumble = True
+        time.sleep(.1)
+        self.wm.rumble = False
+        time.sleep(.1)
+        self.wm.rumble = True
+        time.sleep(.1)
+        self.wm.rumble = False
+
+        log.info("Calibration started. Please move the nunchuck in all directions")
+        log.info("Press PLUS MINUS and B to complete calibration")
+
         self.nun_stick_max_x = 0
         self.nun_stick_min_x = sys.maxint
         self.nun_stick_max_y = 0
@@ -131,10 +140,10 @@ class WiiRemote:
 
     def _complete_calibration(self):
         self.calibration_ongoing = False
-        print "Nunchuck calibration data:"
-        print "  Center: %d,%d" % (self.nun_stick_center_x, self.nun_stick_center_y)
-        print "  Max: %d,%d" % (self.nun_stick_max_x, self.nun_stick_max_y)
-        print "  Min: %d,%d" % (self.nun_stick_min_x, self.nun_stick_min_y)
+        log.info("Nunchuck calibration data:")
+        log.info("  Center: %d,%d" % (self.nun_stick_center_x, self.nun_stick_center_y))
+        log.info("  Max: %d,%d" % (self.nun_stick_max_x, self.nun_stick_max_y))
+        log.info("  Min: %d,%d" % (self.nun_stick_min_x, self.nun_stick_min_y))
 
     def _calibration_cb(self, stick):
         x, y = stick
