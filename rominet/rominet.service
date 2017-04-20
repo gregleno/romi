@@ -1,10 +1,10 @@
 [Unit]
-Description=Robot Service
+Description=Rominet Service
 After=multi-user.target
 
 [Service]
 Type=simple
-ExecStart=/usr/bin/python /home/ubuntu/robot/robot_service.py
+ExecStart=/usr/local/bin/rominet-service
 Restart=on-abort
 
 [Install]

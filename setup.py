@@ -13,7 +13,11 @@ setup(name='rominet',
       author='Gregory Lenoble',
       license='GPLv3',
       packages=['rominet'],
+      entry_points={
+        'console_scripts': ['rominet-service=rominet.service:main']
+      },
       install_requires=[
+       'python-systemd', 'cwiid'
       ],
       test_suite='nose.collector',
       tests_require=['nose', 'nose-cover3'],

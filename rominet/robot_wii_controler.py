@@ -13,7 +13,7 @@ LED2 = (0, 1, 0)
 LED3 = (0, 0, 1)
 
 
-class RobotControler:
+class RobotWiiControler:
 
     def __init__(self):
         self.log = logging.getLogger('romi')
@@ -33,17 +33,17 @@ class RobotControler:
         if self.wiimote is not None:
             self.wiimote.remove_callbacks()
             self.wiimote.release()
+            self.wiimote = None
 
     def buttons_cb(self, buttons):
         if buttons & cwiid.BTN_1 and buttons & cwiid.BTN_B:
             self.release()
 
     def nun_buttons_cb(self, buttons):
-        print("nun_buttons_cb")
+        pass
 
     def nun_stick_cb(self, stick):
-        print stick
-        print("nun_stick_cb")
+        pass
 
     def play_welcome_message(self):
         pattern = (LED1, LED2, LED3, LED1, LED2, LED3, NO_LED, ALL_LEDS, NO_LED, ALL_LEDS, NO_LED)
