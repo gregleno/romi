@@ -3,23 +3,18 @@ import threading
 import time
 import logging
 from wiiremote import WiiRemote
-from a_star import AStar
-
-
-NO_LED = (0, 0, 0)
-ALL_LEDS = (1, 1, 1)
-LED1 = (1, 0, 0)
-LED2 = (0, 1, 0)
-LED3 = (0, 0, 1)
+from robot import Robot
+import math
 
 
 class RobotWiiControler:
 
-    def __init__(self):
+    def __init__(self, robot):
         self.log = logging.getLogger('romi')
-        self.a_star = AStar()
-        self.play_welcome_message()
+        self.robot = robot
+        self.robot.play_welcome_message()
         self.wiimote = WiiRemote.connect()
+        self.nun_btn_z = False
 
         if self.wiimote is not None:
             self.log.info("Connected to wiimote")
@@ -40,21 +35,43 @@ class RobotWiiControler:
             self.release()
 
     def nun_buttons_cb(self, buttons):
-        pass
+        self.nun_btn_z = buttons & cwiid.NUNCHUK_BTN_Z
 
     def nun_stick_cb(self, stick):
-        pass
+        x = stick[0]
+        y = stick[1]
+        left = right = 0
+        speed = math.sqrt(y * y + x * x)
+        left = speed
+        right = speed
+        if speed < 0.05:
+            left = right = 0
+        elif abs(y) < abs(x):
+            if x > 0:
+                right = -speed
+            else:
+                left = -speed
+        else:
+            if y > 0:
+                left = speed - max(0, -x)
+                right = speed - max(0, x)
+            else:
+                left = -speed + max(0, -x)
+                right = -speed + max(0, x)
 
-    def play_welcome_message(self):
-        pattern = (LED1, LED2, LED3, LED1, LED2, LED3, NO_LED, ALL_LEDS, NO_LED, ALL_LEDS, NO_LED)
-        for leds in pattern:
-            self.a_star.leds(*leds)
-            time.sleep(0.2)
+        if not self.nun_btn_z:
+            left *= 0.4
+            right *= 0.4
+        self.robot.move(left, right)
+        pass
 
 
 def main():
-    # my code here
-    RobotControler()
+    log = logging.getLogger('romi')
+    log.setLevel(logging.INFO)
+    log.addHandler(logging.StreamHandler())
+    robot = Robot()
+    rwc = RobotWiiControler(robot)
 
 if __name__ == "__main__":
     main()

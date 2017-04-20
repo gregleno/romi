@@ -61,7 +61,7 @@ class WiiRemote:
             return None
 
     def _wiimote_thread(self, freq):
-
+        # TODO: add try catch and call a release callback
         self.wm.rpt_mode = cwiid.RPT_BTN | cwiid.RPT_NUNCHUK
 
         self.wm.rumble = True
@@ -102,7 +102,7 @@ class WiiRemote:
 
             time.sleep(1. / freq)
 
-    def _release(self):
+    def release(self):
         self.active = False
         if self.wm is not None:
             self.wm.rumble = True
@@ -168,11 +168,6 @@ class WiiRemote:
                        self.nun_stick_center_y - self.nun_stick_min_y)
 
         return (xn, yn)
-
-    def release(self):
-        if self.active:
-            thread2 = threading.Thread(target=self._release, args=[])
-            thread2.start()
 
     def set_led(self, led):
         self.wm.led = led
