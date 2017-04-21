@@ -1,5 +1,4 @@
 import cwiid
-import threading
 import time
 import logging
 from wiiremote import WiiRemote
@@ -12,6 +11,7 @@ class RobotWiiControler:
     def __init__(self, robot):
         self.log = logging.getLogger('romi')
         self.robot = robot
+        robot.track_odometry()
         self.robot.play_welcome_message()
         self.wiimote = WiiRemote.connect()
         self.nun_btn_z = False
@@ -29,6 +29,7 @@ class RobotWiiControler:
             self.wiimote.remove_callbacks()
             self.wiimote.release()
             self.wiimote = None
+        self.robot.stop()
 
     def buttons_cb(self, buttons):
         if buttons & cwiid.BTN_1 and buttons & cwiid.BTN_B:

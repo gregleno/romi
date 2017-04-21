@@ -1,4 +1,5 @@
 import time
+from threading import Thread
 from math import pi, cos, sin
 
 
@@ -6,6 +7,10 @@ from math import pi, cos, sin
 # equivalent angle bound within 0 <= angle < 2 * Pi
 def bound_angle(angle):
     return angle % (2 * pi)
+
+
+def current_time_ms():
+    return int(round(time.time() * 1000))
 
 
 # Function relative_angle(angleRef, angle) returns the shortest relative
@@ -27,17 +32,18 @@ def relative_angle(angle_ref, angle):
 
 class Odometer:
 
-    def __init__(self, encoders, time_step=.02):
+    def __init__(self, encoders):
         self.encoders = encoders
-        self.time_step = time_step
 
         # width between wheels in millimeters
         self.wheel_distance_mm = 142.5
         # Distance travelled for per encoder click in millimeters
-        self.distance_per_tick_mm_mm = .152505
+        self.distance_per_tick_mm = .152505
 
         self.last_count_left = 0
         self.last_count_right = 0
+        self.last_time_ms = 0
+
         self.speed_left = 0
         self.speed_right = 0
         self.phi = 0
@@ -47,30 +53,35 @@ class Odometer:
         self.omega = 0
         self.dist = 0
 
+        self.thread = None
+        self.tracking = False
+
     def update(self):
 
         count_left, count_right = self.encoders.read_encoders()
+        if self.last_time_ms != 0:
+            delta_time_ms = current_time_ms() - self.last_time_ms
 
-        delta_count_left = count_left - self.last_count_left
-        delta_count_right = count_right - self.last_count_right
+            delta_count_left = count_left - self.last_count_left
+            delta_count_right = count_right - self.last_count_right
 
-        dist_left = delta_count_left * self.distance_per_tick_mm
-        dist_right = delta_count_right * self.distance_per_tick_mm
-        distance_center = (dist_left + dist_right) / 2.
-        self.dist += distance_center
+            dist_left = delta_count_left * self.distance_per_tick_mm
+            dist_right = delta_count_right * self.distance_per_tick_mm
+            distance_center = (dist_left + dist_right) / 2.
+            self.dist += distance_center
 
-        self.x += distance_center * cos(self.phi)
-        self.y += distance_center * sin(self.phi)
+            self.x += distance_center * cos(self.phi)
+            self.y += distance_center * sin(self.phi)
 
-        delta_phi = (dist_right - dist_left) / self.wheel_distance_mm
-        self.phi = bound_angle(self.phi + delta_phi)
+            delta_phi = (dist_right - dist_left) / self.wheel_distance_mm
+            self.phi = bound_angle(self.phi + delta_phi)
 
-        # TODO: Use current time to compute speed
-        self.speed_left = dist_left / self.time_step
-        self.speed_right = dist_right / self.time_step
-        self.v = distance_center / self.time_step
-        self.omega = delta_phi / self.time_step
+            self.speed_left = dist_left / delta_time_ms
+            self.speed_right = dist_right / delta_time_ms
+            self.v = distance_center / delta_time_ms
+            self.omega = delta_phi / delta_time_ms
 
+        self.last_time_ms = current_time_ms()
         self.last_count_left = count_left
         self.last_count_right = count_right
 
@@ -91,3 +102,25 @@ class Odometer:
 
     def getspeed_left_right(self):
         return self.speed_left, self.speed_right
+
+    def _tracking_thread(self, freq):
+        # TODO: call the callbacks the first time they are set/modified in the loop
+        last_time_print_ms = 0
+        while self.tracking:
+            self.update()
+            if current_time_ms() - last_time_print_ms > 3000:
+                print ((self.x, self.y))
+                print self.encoders.read_encoders()
+                last_time_print_ms = current_time_ms()
+            time.sleep(1. / freq)
+
+    def stop_tracking(self):
+        self.tracking = False
+
+    # TODO: pause the thread when not moving
+    # TODO: kill the thread before leaving
+    def track_odometry(self, freq=100):
+        if self.thread is None:
+            self.tracking = True
+            self.thread = Thread(target=self._tracking_thread, args=[freq])
+            self.thread.start()

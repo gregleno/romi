@@ -1,5 +1,7 @@
 from a_star import AStar
 from motors import Motors
+from odometer import Odometer
+from encoders import Encoders
 import logging
 import time
 
@@ -16,14 +18,21 @@ class Robot:
         # TODO: check if a star is available
         self.a_star = AStar()
         self.motors = Motors(self.a_star)
+        self.encoders = Encoders(self.a_star)
+        self.odometer = Odometer(self.encoders)
+
         self.log = logging.getLogger('romi')
-        self.log.info("Battery: {} mV".format(self.a_star.read_battery_millivolts()))
+        # self.log.info("Battery: {} mV".format(self.a_star.read_battery_millivolts()))
 
     def move(self, left, right):
         self.motors.move(left, right)
 
+    def track_odometry(self):
+        self.odometer.track_odometry(100)
+
     def stop(self):
-        self.motors.move(0, 0)
+        self.motors.stop()
+        self.odometer.stop_tracking()
 
     def read_buttons(self):
         return self.a_star.read_buttons()
