@@ -71,11 +71,13 @@ def main():
         logging.error("Error happened")
         logging.error(e)
 
-    if robot_wii_controler is not None:
-        robot_wii_controler.release()
-        logging.info("Releasing robot wii controler")
+    finally:
+        if robot_wii_controler is not None:
+            robot_wii_controler.release()
+            logging.info("Releasing robot wii controler")
 
-    robot.stop()
+        logging.info("Stopping robot")
+        robot.stop()
 
 
 if __name__ == "__main__":

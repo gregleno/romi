@@ -38,4 +38,4 @@ class Robot:
         pattern = (ALL_LEDS, (1, 1, 0), (1, 0, 0), NO_LED)
         for leds in pattern:
             self.a_star.leds(*leds)
-            sleep(0.4)
+            time.sleep(0.4)
