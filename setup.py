@@ -17,7 +17,7 @@ setup(name='rominet',
         'console_scripts': ['rominet-service=rominet.service:main']
       },
       install_requires=[
-       'python-systemd', 'cwiid'
+       'python-systemd'
       ],
       test_suite='nose.collector',
       tests_require=['nose', 'nose-cover3'],
