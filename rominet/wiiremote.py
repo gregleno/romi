@@ -1,5 +1,5 @@
 import cwiid
-import threading
+from threading import Thread
 import time
 import logging
 import sys
@@ -8,9 +8,9 @@ import sys
 class WiiRemote:
 
     def __init__(self, wm):
-        self.buttons = 0
-        self.nun_buttons = 0
-        self.nun_stick = (0, 0)
+        self.buttons = sys.maxint
+        self.nun_buttons = sys.maxint
+        self.nun_stick = (sys.maxint, sys.maxint)
         self.active = False
         self.buttons_cb = None
         self.nun_buttons_cb = None
@@ -69,6 +69,7 @@ class WiiRemote:
         self.wm.rumble = False
         self.wm.rpt_mode = cwiid.RPT_BTN | cwiid.RPT_NUNCHUK
 
+        # TODO: call the callbacks the first time they are set/modified in the loop
         while self.active:
             buttons = self.wm.state['buttons']
             nun_buttons = self.wm.state['nunchuk']['buttons']
@@ -113,8 +114,8 @@ class WiiRemote:
     def monitor(self, freq):
         if not self.active:
             self.active = True
-            thread1 = threading.Thread(target=self._wiimote_thread, args=[freq])
-            thread1.start()
+            p = Thread(target=self._wiimote_thread, args=[freq])
+            p.start()
         else:
             raise Exception("Wiiremote already active")
 
