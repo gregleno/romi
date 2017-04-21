@@ -15,10 +15,10 @@ sys.path.append('../')
 rpb202 = robotbuilder.build()
 
 # Set program loop time step
-timeStep = .02
+time_step = .02
 
 # Set motion controller refresh time step
-rpb202.motionCtrl.setTimeStep(timeStep)
+rpb202.motionCtrl.settime_step(time_step)
 
 # Define program specific variables
 diameter = 400  # Circle diameter in mm
@@ -38,7 +38,7 @@ try:
     fullSpeed = True
 
     # Main loop
-    while phi < 2 * pi - 1.1 * omega * timeStep:
+    while phi < 2 * pi - 1.1 * omega * time_step:
 
         if fullSpeed and phi > 1.95 * pi:
             speed /= 2
@@ -51,12 +51,12 @@ try:
         rpb202.motionCtrl.setSpeed(speed, omega)
 
         # Wait until end of time step
-        loopTimer.sleepToElapsed(timeStep)
+        loopTimer.sleepToElapsed(time_step)
 
-        phi = rpb202.odometer.getPhi()
+        phi = rpb202.odometer.get_phi()
         print round(degrees(phi), 1)
 
-    print rpb202.odometer.getPosXY()
+    print rpb202.odometer.get_position_XY()
 
 except KeyboardInterrupt:
     print "Keyboard Interrupt"

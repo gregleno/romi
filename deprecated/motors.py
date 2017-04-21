@@ -29,9 +29,9 @@ class Motors:
         speedL, speedR = self.odometer.getSpeedLR()
 
         cmdL = self.pidL.getOutput(
-                    speedTargetL, speedL, self.odometer.timeStep) / self.speedCst
+                    speedTargetL, speedL, self.odometer.time_step) / self.speedCst
         cmdR = self.pidR.getOutput(
-                    speedTargetR, speedR, self.odometer.timeStep) / self.speedCst
+                    speedTargetR, speedR, self.odometer.time_step) / self.speedCst
 
         # Limit motor command
         if cmdL < -1:

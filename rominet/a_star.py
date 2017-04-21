@@ -18,6 +18,8 @@ class AStar(object):
     # A delay of 0.0001 (100 us) after each write is enough to account
     # for the worst-case situation in our example code.
 
+    # TODO protect from multithread access
+
     self.bus.write_byte(20,address)
     time.sleep(0.0001)
     byte_list = []

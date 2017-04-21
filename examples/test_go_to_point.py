@@ -27,11 +27,11 @@ def goToPoint(point, speed):
         angle, dist = angleDistToPoint(point)
     rpb202.motionCtrl.forwardDist(speed, dist, decel=True)
     rpb202.stop()
-    print rpb202.odometer.getPosXY()
+    print rpb202.odometer.get_position_XY()
 
 
 def angleDistToPoint(point):
-    position = np.array(rpb202.odometer.getPosXY())
+    position = np.array(rpb202.odometer.get_position_XY())
     dx, dy = point - position
     angle = atan2(dy, dx) % (2 * pi)
     dist = sqrt(dx**2 + dy**2)
@@ -42,7 +42,7 @@ try:
     for point in points:
         print "Point suivant:", point
         goToPoint(point, 200)
-    print rpb202.odometer.getPosXY()
+    print rpb202.odometer.get_position_XY()
     print rpb202.odometer.dist
 
 except KeyboardInterrupt:

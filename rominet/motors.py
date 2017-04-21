@@ -16,3 +16,6 @@ class Motors:
     def stop(self):
         self.a_star.motors(0, 0)
         self.reset()
+
+    def reset(self):
+        pass
