@@ -25,10 +25,8 @@ class Robot:
         # self.log.info("Battery: {} mV".format(self.a_star.read_battery_millivolts()))
 
     def move(self, left, right):
-        self.motors.move(left, right)
-
-    def track_odometry(self):
         self.odometer.track_odometry(100)
+        self.motors.move(left, right)
 
     def stop(self):
         self.motors.stop()

@@ -14,8 +14,4 @@ class Motors:
                            right * self.trim_right * self.maxCmd)
 
     def stop(self):
-        self.a_star.motors(0, 0)
-        self.reset()
-
-    def reset(self):
-        pass
+        self.aStar.motors(0, 0)

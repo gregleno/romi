@@ -55,9 +55,9 @@ class Odometer:
 
         self.thread = None
         self.tracking = False
+        self.freq = 100
 
-    def update(self):
-
+    def _update(self):
         count_left, count_right = self.encoders.read_encoders()
         if self.last_time_ms != 0:
             delta_time_ms = current_time_ms() - self.last_time_ms
@@ -103,24 +103,25 @@ class Odometer:
     def getspeed_left_right(self):
         return self.speed_left, self.speed_right
 
-    def _tracking_thread(self, freq):
-        # TODO: call the callbacks the first time they are set/modified in the loop
+    def _tracking_thread(self):
         last_time_print_ms = 0
         while self.tracking:
-            self.update()
+            self._update()
             if current_time_ms() - last_time_print_ms > 3000:
-                print ((self.x, self.y))
-                print self.encoders.read_encoders()
+                print("X,Y = {},{}".format(self.x, self.y))
+                print("EncL,EncoR = {},{}".format(self.last_count_left, self.last_count_right))
                 last_time_print_ms = current_time_ms()
-            time.sleep(1. / freq)
+            time.sleep(1. / self.freq)
 
     def stop_tracking(self):
         self.tracking = False
+        self.thread = None
 
     # TODO: pause the thread when not moving
     # TODO: kill the thread before leaving
     def track_odometry(self, freq=100):
+        self.freq = freq
         if self.thread is None:
             self.tracking = True
-            self.thread = Thread(target=self._tracking_thread, args=[freq])
+            self.thread = Thread(target=self._tracking_thread)
             self.thread.start()

@@ -11,7 +11,6 @@ class RobotWiiControler:
     def __init__(self, robot):
         self.log = logging.getLogger('romi')
         self.robot = robot
-        robot.track_odometry()
         self.robot.play_welcome_message()
         self.wiimote = WiiRemote.connect()
         self.nun_btn_z = False
