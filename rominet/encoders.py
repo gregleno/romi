@@ -9,6 +9,8 @@ class Encoders:
         self.count_sign_left = 1
         self.count_sign_right = -1
 
+        self.last_count_left, self.last_count_right = self.a_star.read_encoders()
+
     def read_encoders(self):
         count_left, count_right = self.a_star.read_encoders()
 
