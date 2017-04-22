@@ -59,8 +59,9 @@ class Odometer:
 
     def _update(self):
         count_left, count_right = self.encoders.read_encoders()
+        time_ms = current_time_ms()
         if self.last_time_ms != 0:
-            delta_time_ms = current_time_ms() - self.last_time_ms
+            delta_time_ms = time_ms - self.last_time_ms
 
             delta_count_left = count_left - self.last_count_left
             delta_count_right = count_right - self.last_count_right
@@ -81,7 +82,7 @@ class Odometer:
             self.v = distance_center / delta_time_ms
             self.omega = delta_phi / delta_time_ms
 
-        self.last_time_ms = current_time_ms()
+        self.last_time_ms = time_ms
         self.last_count_left = count_left
         self.last_count_right = count_right
 
@@ -107,8 +108,9 @@ class Odometer:
         last_time_print_ms = 0
         while self.tracking:
             self._update()
+            # TODO: there must be a sign issue with the encoders
             if current_time_ms() - last_time_print_ms > 3000:
-                print("X,Y = {},{}".format(self.x, self.y))
+                print("X,Y = {} dist={}".format((self.x, self.y), self.dist))
                 print("EncL,EncoR = {},{}".format(self.last_count_left, self.last_count_right))
                 last_time_print_ms = current_time_ms()
             time.sleep(1. / self.freq)
