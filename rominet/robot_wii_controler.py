@@ -36,8 +36,12 @@ class RobotWiiControler:
 
     def nun_buttons_cb(self, buttons):
         self.nun_btn_z = buttons & cwiid.NUNCHUK_BTN_Z
+        self._move_robot(self.wiimote.get_nun_stick())
 
     def nun_stick_cb(self, stick):
+        self._move_robot(stick)
+
+    def _move_robot(self, stick):
         x = stick[0]
         y = stick[1]
         left = right = 0

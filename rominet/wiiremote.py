@@ -37,6 +37,9 @@ class WiiRemote:
         self.nun_buttons_cb = None
         self.nun_stick_cb = None
 
+    def get_nun_stick(self):
+        return self._normalize_nun_stick(self.nun_stick)
+
     @staticmethod
     def connect():
         log = logging.getLogger('romi')
@@ -75,7 +78,15 @@ class WiiRemote:
             nun_buttons = self.wm.state['nunchuk']['buttons']
             nun_stick = self.wm.state['nunchuk']['stick']
 
-            if buttons != self.buttons:
+            prev_buttons = self.buttons
+            prev_nun_buttons = self.nun_buttons
+            prev_nun_stick = self.nun_stick
+
+            self.buttons = buttons
+            self.nun_buttons = nun_buttons
+            self.nun_stick = nun_stick
+
+            if buttons != prev_buttons:
                 if self.buttons_cb is not None:
                     self.buttons_cb(buttons)
 
@@ -86,20 +97,16 @@ class WiiRemote:
                     else:
                         self._complete_calibration()
 
-            self.buttons = buttons
-
-            if nun_buttons != self.nun_buttons:
+            if nun_buttons != prev_nun_buttons:
                 if self.nun_buttons_cb is not None:
                     self.nun_buttons_cb(nun_buttons)
-                self.nun_buttons = nun_buttons
 
-            if nun_stick != self.nun_stick:
+            if nun_stick != prev_nun_stick:
                 # If calibration is ongoing we do not call the normal callback
                 if self.calibration_ongoing:
                     self._calibration_cb(nun_stick)
                 elif self.nun_stick_cb is not None:
                     self.nun_stick_cb(self._normalize_nun_stick(nun_stick))
-                self.nun_stick = nun_stick
 
             time.sleep(1. / freq)
 

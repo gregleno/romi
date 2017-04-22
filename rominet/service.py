@@ -34,12 +34,14 @@ def main():
                     if buttonB and buttonC:
                         log.info("Stopping raspberry")
                         robot.play_goodbye_message()
+                        robot.stop()
                         os.system("sudo halt")
                         cont = False
                         break
                     if buttonA and buttonB:
                         log.info("Restarting raspberry")
                         robot.play_goodbye_message()
+                        robot.stop()
                         os.system("sudo reboot")
                         cont = False
                         break
@@ -65,6 +67,9 @@ def main():
     except Exception as e:
         logging.error("Error happened")
         logging.error(e)
+
+    except:
+        logging.error("Something really bad happened")
 
     finally:
         if robot_wii_controler is not None:
