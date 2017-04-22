@@ -2,17 +2,10 @@
 
 import logging
 from systemd.journal import JournalHandler
-import time
 from time import sleep
 from robot import Robot
 from robot_wii_controler import RobotWiiControler
 import os
-
-NO_LED = (0, 0, 0)
-ALL_LEDS = (1, 1, 1)
-LED1 = (1, 0, 0)
-LED2 = (0, 1, 0)
-LED3 = (0, 0, 1)
 
 
 def main():
@@ -43,11 +36,13 @@ def main():
                         robot.play_goodbye_message()
                         os.system("sudo halt")
                         cont = False
+                        break
                     if buttonA and buttonB:
                         log.info("Restarting raspberry")
                         robot.play_goodbye_message()
                         os.system("sudo reboot")
                         cont = False
+                        break
                     if buttonA:
                         if robot_wii_controler is None:
                             log.info("Creating RobotWiiControler")
@@ -65,7 +60,7 @@ def main():
                 sleep(10)
 
     except KeyboardInterrupt as e:
-        logging.info("Stopped")
+        logging.info("Stopped by KeyboardInterrupt")
 
     except Exception as e:
         logging.error("Error happened")
