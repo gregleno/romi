@@ -50,7 +50,7 @@ class RobotWiiControler:
         right = speed
         if speed < 0.05:
             left = right = 0
-        elif abs(y) < abs(x):
+        elif abs(y) < abs(x) / 2:
             if x > 0:
                 right = -speed
             else:
