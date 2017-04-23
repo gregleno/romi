@@ -17,6 +17,7 @@ class WiiRemote:
         self.nun_stick_cb = None
         self.wm = wm
         self.led = 0
+        self.nun_connected = False
 
         # TODO: read calibration from a calibration file
         self.calibration_ongoing = False
@@ -27,10 +28,11 @@ class WiiRemote:
         self.nun_stick_center_x = 131
         self.nun_stick_center_y = 128
 
-    def set_callbacks(self, buttons_cb, nun_buttons_cb, nun_stick_cb):
+    def set_callbacks(self, buttons_cb, nun_buttons_cb, nun_stick_cb, nun_stick_disconnected_cb):
         self.buttons_cb = buttons_cb
         self.nun_buttons_cb = nun_buttons_cb
         self.nun_stick_cb = nun_stick_cb
+        self.nun_stick_disconnected_cb = nun_stick_disconnected_cb
 
     def remove_callbacks(self):
         self.buttons_cb = None
@@ -38,7 +40,10 @@ class WiiRemote:
         self.nun_stick_cb = None
 
     def get_nun_stick(self):
-        return self._normalize_nun_stick(self.nun_stick)
+        if self.nun_connected:
+            return self._normalize_nun_stick(self.nun_stick)
+        else:
+            return None
 
     @staticmethod
     def connect():
@@ -75,8 +80,20 @@ class WiiRemote:
         # TODO: call the callbacks the first time they are set/modified in the loop
         while self.active:
             buttons = self.wm.state['buttons']
-            nun_buttons = self.wm.state['nunchuk']['buttons']
-            nun_stick = self.wm.state['nunchuk']['stick']
+            try:
+                nun_buttons = self.wm.state['nunchuk']['buttons']
+                nun_stick = self.wm.state['nunchuk']['stick']
+
+                # When nunchuk is reconnected the first reading is discarded to avoid glicthes
+                if not self.nun_connected:
+                    self.nun_buttons = nun_buttons
+                    self.nun_stick = nun_stick
+                    self.nun_connected = True
+            except KeyError:
+                if self.nun_connected:
+                    if self.nun_stick_disconnected_cb is not None:
+                        self.nun_stick_disconnected_cb()
+                    self.nun_connected = False
 
             prev_buttons = self.buttons
             prev_nun_buttons = self.nun_buttons
@@ -97,11 +114,11 @@ class WiiRemote:
                     else:
                         self._complete_calibration()
 
-            if nun_buttons != prev_nun_buttons:
+            if nun_buttons != prev_nun_buttons and self.nun_connected:
                 if self.nun_buttons_cb is not None:
                     self.nun_buttons_cb(nun_buttons)
 
-            if nun_stick != prev_nun_stick:
+            if nun_stick != prev_nun_stick and self.nun_connected:
                 # If calibration is ongoing we do not call the normal callback
                 if self.calibration_ongoing:
                     self._calibration_cb(nun_stick)
