@@ -17,7 +17,8 @@ setup(name='rominet',
         'console_scripts': ['rominet-service=rominet.service:main']
       },
       install_requires=[
+       'pytest-runner'
       ],
-      test_suite='nose.collector',
-      tests_require=['nose', 'nose-cover3'],
+      test_suite='pytest',
+      tests_require=['pytest'],
       zip_safe=False)
