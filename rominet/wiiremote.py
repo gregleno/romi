@@ -92,7 +92,11 @@ class WiiRemote:
             except KeyError:
                 if self.nun_connected:
                     if self.nun_stick_disconnected_cb is not None:
-                        self.nun_stick_disconnected_cb()
+                        try:
+                            self.nun_stick_disconnected_cb()
+                        except Exception as e:
+                            log.error(e)
+
                     self.nun_connected = False
 
             prev_buttons = self.buttons
@@ -105,7 +109,10 @@ class WiiRemote:
 
             if buttons != prev_buttons:
                 if self.buttons_cb is not None:
-                    self.buttons_cb(buttons)
+                    try:
+                        self.buttons_cb(buttons)
+                    except Exception as e:
+                        log.error(e)
 
                 if buttons & cwiid.BTN_PLUS and buttons & cwiid.BTN_MINUS and buttons & cwiid.BTN_B:
                     # If we start calibration we assume that the nunchuck is at the center
@@ -116,14 +123,20 @@ class WiiRemote:
 
             if nun_buttons != prev_nun_buttons and self.nun_connected:
                 if self.nun_buttons_cb is not None:
-                    self.nun_buttons_cb(nun_buttons)
+                    try:
+                        self.nun_buttons_cb(nun_buttons)
+                    except Exception as e:
+                        log.error(e)
 
             if nun_stick != prev_nun_stick and self.nun_connected:
                 # If calibration is ongoing we do not call the normal callback
                 if self.calibration_ongoing:
                     self._calibration_cb(nun_stick)
                 elif self.nun_stick_cb is not None:
-                    self.nun_stick_cb(self._normalize_nun_stick(nun_stick))
+                    try:
+                        self.nun_stick_cb(self._normalize_nun_stick(nun_stick))
+                    except Exception as e:
+                        log.error(e)
 
             time.sleep(1. / freq)
 
