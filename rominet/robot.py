@@ -25,7 +25,9 @@ class Robot:
         self.log = logging.getLogger('romi')
         self.alive = True
         self.battery_millivolts = 0
-        Thread(target=self._monitor_status).start()
+        t = Thread(target=self._monitor_status)
+        t.daemon = True
+        t.start()
 
     def move(self, left, right):
         self.odometer.track_odometry(100)

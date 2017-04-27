@@ -120,10 +120,10 @@ class Odometer:
         self.thread = None
 
     # TODO: pause the thread when not moving
-    # TODO: kill the thread before leaving
     def track_odometry(self, freq=100):
         self.freq = freq
         if self.thread is None:
             self.tracking = True
             self.thread = Thread(target=self._tracking_thread)
+            self.thread.daemon = True
             self.thread.start()

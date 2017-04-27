@@ -138,8 +138,9 @@ class WiiRemote:
     def monitor(self, freq):
         if not self.active:
             self.active = True
-            p = Thread(target=self._wiimote_thread, args=[freq])
-            p.start()
+            t = Thread(target=self._wiimote_thread, args=[freq])
+            t.daemon = True
+            t.start()
         else:
             raise Exception("Wiiremote already active")
 
