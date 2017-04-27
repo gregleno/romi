@@ -41,7 +41,6 @@ class AStar(object):
         bus_lock.release()
     time.sleep(0.0001)
 
-
   def leds(self, red, yellow, green):
     self.write_pack(0, 'BBB', red, yellow, green)
 

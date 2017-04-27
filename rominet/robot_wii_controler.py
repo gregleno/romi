@@ -32,7 +32,7 @@ class RobotWiiControler:
             self.wiimote.remove_callbacks()
             self.wiimote.release()
             self.wiimote = None
-        self.robot.stop()
+        self.robot.move(0, 0)
 
     def buttons_cb(self, buttons):
         if buttons & cwiid.BTN_1 and buttons & cwiid.BTN_B:

@@ -73,8 +73,8 @@ def main():
 
     finally:
         if robot_wii_controler is not None:
-            robot_wii_controler.release()
             logging.info("Releasing robot wii controler")
+            robot_wii_controler.release()
 
         logging.info("Stopping robot")
         robot.stop()
