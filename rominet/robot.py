@@ -54,8 +54,17 @@ class Robot:
             time.sleep(0.4)
 
     def _monitor_status(self):
+        old_dist = 0
+        old_pos = (0, 0)
         while self.alive:
             try:
+                pos = self.odometer.get_position_XY()
+                dist = self.odometer.get_distance()
+                if old_pos != pos or old_dist != dist:
+                    self.log.info("X,Y = {} dist={}".format(pos, dist))
+                    old_dist = dist
+                    old_pos = pos
+
                 battery, = self.a_star.read_battery_millivolts()
                 if abs(self.battery_millivolts - battery) > 50:
                     self.log.info("Battery: {} mV".format(battery))

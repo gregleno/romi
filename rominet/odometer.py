@@ -89,6 +89,9 @@ class Odometer:
     def get_position_XY(self):
         return self.x, self.y
 
+    def get_distance(self):
+        return self.dist
+
     def get_phi(self):
         return self.phi
 
@@ -105,14 +108,8 @@ class Odometer:
         return self.speed_left, self.speed_right
 
     def _tracking_thread(self):
-        last_time_print_ms = 0
         while self.tracking:
             self._update()
-            # TODO: there must be a sign issue with the encoders
-            if current_time_ms() - last_time_print_ms > 3000:
-                print("X,Y = {} dist={}".format((self.x, self.y), self.dist))
-                print("EncL,EncoR = {},{}".format(self.last_count_left, self.last_count_right))
-                last_time_print_ms = current_time_ms()
             time.sleep(1. / self.freq)
 
     def stop_tracking(self):
