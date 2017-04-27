@@ -123,6 +123,7 @@ class Odometer:
     def track_odometry(self, freq=100):
         self.freq = freq
         if self.thread is None:
+            self.odometer.reset()
             self.tracking = True
             self.thread = Thread(target=self._tracking_thread)
             self.thread.daemon = True

@@ -27,3 +27,8 @@ class Encoders:
         self.last_count_right = count_right
 
         return self.count_left, self.count_right
+
+    def reset():
+        self.count_left = 0
+        self.count_right = 0
+        self.last_count_left, self.last_count_right = self.a_star.read_encoders()
