@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
 import logging
-from systemd.journal import JournalHandler
 from time import sleep
 from robot import Robot
 from robot_wii_controler import RobotWiiControler
@@ -15,9 +14,7 @@ def main():
 
     try:
         log = logging.getLogger('romi')
-        log.addHandler(JournalHandler())
         log.addHandler(logging.StreamHandler())
-
         log.setLevel(logging.INFO)
         log.info("romi start")
 
@@ -73,8 +70,8 @@ def main():
 
     finally:
         if robot_wii_controler is not None:
-            logging.info("Releasing robot wii controler")
             robot_wii_controler.release()
+            logging.info("Releasing robot wii controler")
 
         logging.info("Stopping robot")
         robot.stop()
