@@ -6,8 +6,6 @@ class Encoders:
         self.count_right = 0
         self.last_count_left = 0
         self.last_count_right = 0
-        self.count_sign_left = 1
-        self.count_sign_right = -1
 
     def read_encoders(self):
         count_left, count_right = self.a_star.read_encoders()
@@ -20,8 +18,8 @@ class Encoders:
         if diff_right >= 0x8000:
             diff_right -= 0x10000
 
-        self.count_left += self.count_sign_left * diff_left
-        self.count_right += self.count_sign_right * diff_right
+        self.count_left += diff_left
+        self.count_right += diff_right
 
         self.last_count_left = count_left
         self.last_count_right = count_right
