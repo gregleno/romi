@@ -53,13 +53,39 @@ class Robot:
             self.a_star.leds(*leds)
             time.sleep(0.4)
 
+    def get_position_XY(self):
+        return self.odometer.get_position_XY()
+
+    def get_distance(self):
+        return self.odometer.get_distance()
+
+    def get_speed(self):
+        return self.odometer.get_speed()
+
+    def set_leds(self, leds):
+        return self.a_star.leds(leds)
+
+    def get_battery(self):
+        try:
+            mv, = self.a_star.read_battery_millivolts()
+            return mv
+        except IOError:
+            return None
+
+    def is_romi_board_connected(self):
+        try:
+            mv, = self.a_star.read_battery_millivolts()
+            return True
+        except IOError:
+            return False
+
     def _monitor_status(self):
         old_dist = 0
         old_pos = (0, 0)
         while self.alive:
             try:
-                pos = self.odometer.get_position_XY()
-                dist = self.odometer.get_distance()
+                pos = self.get_position_XY()
+                dist = self.get_distance()
                 if old_pos != pos or old_dist != dist:
                     self.log.info("X,Y = {} dist={}".format(pos, dist))
                     old_dist = dist
