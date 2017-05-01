@@ -46,7 +46,7 @@ class Odometer:
 
         self.speed_left = 0
         self.speed_right = 0
-        self.phi = 0
+        self.yaw = 0
         self.x = 0
         self.y = 0
         self.v = 0
@@ -71,16 +71,16 @@ class Odometer:
             distance_center = (dist_left + dist_right) / 2.
             self.dist += distance_center
 
-            self.x += distance_center * cos(self.phi)
-            self.y += distance_center * sin(self.phi)
+            self.x += distance_center * cos(self.yaw)
+            self.y += distance_center * sin(self.yaw)
 
-            delta_phi = (dist_right - dist_left) / self.wheel_distance_mm
-            self.phi = bound_angle(self.phi + delta_phi)
+            delta_yaw = (dist_right - dist_left) / self.wheel_distance_mm
+            self.yaw = bound_angle(self.yaw + delta_yaw)
 
             self.speed_left = dist_left / delta_time_ms
             self.speed_right = dist_right / delta_time_ms
             self.v = distance_center / delta_time_ms
-            self.omega = delta_phi / delta_time_ms
+            self.omega = delta_yaw / delta_time_ms
 
         self.last_time_ms = time_ms
         self.last_count_left = count_left
@@ -92,11 +92,11 @@ class Odometer:
     def get_distance(self):
         return self.dist
 
-    def get_phi(self):
-        return self.phi
+    def get_yaw(self):
+        return self.yaw
 
-    def angle_relative_to_phi(self, angle):
-        return relative_angle(self.phi, angle)
+    def angle_relative_to_yaw(self, angle):
+        return relative_angle(self.yaw, angle)
 
     def get_omega(self):
         return self.omega
