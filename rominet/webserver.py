@@ -1,53 +1,97 @@
 #!/usr/bin/env python
 
-from flask import Flask, jsonify, make_response, request, abort
+from flask import Flask, jsonify, make_response, request, abort, render_template, redirect
+import json
+import time
+import os
 from robot import Robot
 
 app = Flask("rominet")
 robot = None
 
-# TODO: switch to flask restful
-# see https://blog.miguelgrinberg.com/post/designing-a-restful-api-using-flask-restful
-
 
 @app.route('/')
 def index():
-    return "Hello, World!"
+    return render_template("index.html")
 
 
 @app.route('/rominet/api/leds', methods=['PUT'])
 def set_leds():
     if not request.json:
         abort(400)
-    if 'leds' not in request.json or type(request.json['leds']) is not int:
+    if 'red' not in request.json or type(request.json['red']) is not int:
         abort(400)
-    leds = request.json['leds']
+    if 'yellow' not in request.json or type(request.json['yellow']) is not int:
+        abort(400)
+    if 'green' not in request.json or type(request.json['green']) is not int:
+        abort(400)
+    red = request.json['red']
+    yellow = request.json['yellow']
+    green = request.json['green']
     try:
-        robot.set_leds(leds)
-        return jsonify({'leds': leds})
+        robot.set_leds(red, yellow, green)
+        return jsonify({})
     except IOError:
         return jsonify({'connected': False})
 
 
+@app.route("/rominet/api/notes", methods=['PUT'])
+def play_notes():
+    if not request.json:
+        abort(400)
+    if 'notes' not in request.json or type(request.json['notes']) is not unicode:
+        abort(400)
+    robot.play_notes(request.json['notes'])
+    return jsonify({})
+
+
+@app.route("/shutdown")
+def rebooting():
+    return "Shutting down! You can remove power when the green LED stops flashing"
+
+
 @app.route('/rominet/api/reboot', methods=['GET'])
 def reboot():
-    robot.stop()
-    os.system("sudo reboot")
+    try:
+        robot.stop()
+    except:
+        pass
+    os.system("sudo halt")
+    return redirect("/shutdown")
 
 
+# TODO only return this for api calls
 @app.errorhandler(404)
 def not_found(error):
     return make_response(jsonify({'error': 'Not found'}), 404)
 
 
-@app.route('/rominet/api/status', methods=['GET'])
+@app.route("/rominet/api/motors", methods=['PUT'])
+def motors():
+    if 'left' not in request.json or type(request.json['left']) is not int:
+        abort(400)
+    if 'right' not in request.json or type(request.json['right']) is not int:
+        abort(400)
+    left = request.json['left']
+    right = request.json['right']
+
+    robot.set_motors(left/100., right/100.)
+    return jsonify({})
+
+
+@app.route('/rominet/api/status')
 def get_status():
     try:
-        return jsonify({'battery': robot.get_battery(),
-                        'connected': True,
-                        'position': robot.get_position_XY(),
-                        'speed': robot.get_speed(),
-                        'buttons': robot.read_buttons()})
+        data = {'battery': robot.get_battery(),
+                'connected': True,
+                'buttons': robot.read_buttons(),
+                'position': robot.get_position_XY(),
+                'encoders': robot.get_encoders(),
+                'speed': robot.get_speed(),
+                'distance': robot.get_distance(),
+                'yaw': robot.get_yaw(),
+                'buttons': robot.read_buttons()}
+        return jsonify(data)
     except IOError:
         return jsonify({'connected': False})
 
@@ -66,21 +110,27 @@ class RobotTest(Robot):
         pass
 
     def read_buttons(self):
-        return 3
-
-    def get_position_XY(self):
-        return (1, 2)
-
-    def get_distance(self):
-        return 7
-
-    def get_speed(self):
-        return 0
+        return (1, 0, 0)
 
     def get_battery(self):
         return 7200
 
-    def set_leds(self, leds):
+    def get_encoders(self):
+        return ((int)(time.time()/3 % 1000), (int)(time.time()/2 % 1000))
+
+    def get_yaw(self):
+        return (int)(time.time() % 100)
+
+    def set_leds(self, red, yellow, green):
+        print "set leds {}, {}, {}".format(red, yellow, green)
+        pass
+
+    def set_motors(self, left, right):
+        print "set motors {}:{}".format(left, right)
+        pass
+
+    def play_notes(self, notes):
+        print "play notes {}".format(notes)
         pass
 
     def is_romi_board_connected(self):

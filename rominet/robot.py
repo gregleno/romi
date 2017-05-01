@@ -34,9 +34,9 @@ class Robot:
         self.motors.move(left, right)
 
     def stop(self):
-        self.motors.stop()
         self.odometer.stop_tracking()
         self.alive = False
+        self.motors.stop()
 
     def read_buttons(self):
         return self.a_star.read_buttons()
@@ -56,14 +56,23 @@ class Robot:
     def get_position_XY(self):
         return self.odometer.get_position_XY()
 
+    def get_encoders(self):
+        return self.encoders.get_encoder_values()
+
+    def get_yaw(self):
+        return self.odometer.get_yaw()
+
     def get_distance(self):
         return self.odometer.get_distance()
 
     def get_speed(self):
         return self.odometer.get_speed()
 
-    def set_leds(self, leds):
-        return self.a_star.leds(leds)
+    def set_leds(self, red, yellow, green):
+        self.a_star.leds(red, yellow, green)
+
+    def play_notes(self, notes):
+        self.a_star.play_notes(notes)
 
     def get_battery(self):
         try:
