@@ -7,6 +7,9 @@ class Encoders:
         self.last_count_left = 0
         self.last_count_right = 0
 
+    def get_encoder_values(self):
+        return (self.count_left, self.count_right)
+
     def read_encoders(self):
         count_left, count_right = self.a_star.read_encoders()
 
