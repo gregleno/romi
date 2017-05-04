@@ -5,6 +5,8 @@ import json
 import time
 import os
 from robot import Robot
+import logging
+
 
 app = Flask("rominet")
 robot = None
@@ -99,42 +101,10 @@ def get_status():
 def run_web_server(rob):
     global robot
     robot = rob
-    app.run(debug=True, host="0.0.0.0")
+    log = logging.getLogger('werkzeug')
+    log.setLevel(logging.ERROR)
+    app.run(debug=False, host="0.0.0.0", threaded=True)
 
-
-class RobotTest(Robot):
-    def move(self, left, right):
-        pass
-
-    def stop(self):
-        pass
-
-    def read_buttons(self):
-        return (1, 0, 0)
-
-    def get_battery(self):
-        return 7200
-
-    def get_encoders(self):
-        return ((int)(time.time()/3 % 1000), (int)(time.time()/2 % 1000))
-
-    def get_yaw(self):
-        return (int)(time.time() % 100)
-
-    def set_leds(self, red, yellow, green):
-        print "set leds {}, {}, {}".format(red, yellow, green)
-        pass
-
-    def set_motors(self, left, right):
-        print "set motors {}:{}".format(left, right)
-        pass
-
-    def play_notes(self, notes):
-        print "play notes {}".format(notes)
-        pass
-
-    def is_romi_board_connected(self):
-        return True
 
 if __name__ == '__main__':
     run_web_server(RobotTest())
