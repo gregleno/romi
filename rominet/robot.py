@@ -36,7 +36,8 @@ class Robot:
     def stop(self):
         self.odometer.stop_tracking()
         self.alive = False
-        self.motors.stop()
+        if self.is_romi_board_connected():
+            self.motors.stop()
 
     def read_buttons(self):
         return self.a_star.read_buttons()
