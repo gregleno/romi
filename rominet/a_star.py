@@ -22,24 +22,18 @@ class AStar(object):
     # A delay of 0.0001 (100 us) after each write is enough to account
     # for the worst-case situation in our example code.
     byte_list = []
-    bus_lock.acquire()
-    try:
+    with bus_lock:
         self.bus.write_byte(20, address)
         time.sleep(0.0001)
         for n in range(0, size):
             byte_list.append(self.bus.read_byte(20))
-    finally:
-        bus_lock.release()
     return struct.unpack(format, bytes(bytearray(byte_list)))
 
   def write_pack(self, address, format, *data):
     data_array = map(ord, list(struct.pack(format, *data)))
-    bus_lock.acquire()
-    try:
+    with bus_lock:
         self.bus.write_i2c_block_data(20, address, data_array)
-    finally:
-        bus_lock.release()
-    time.sleep(0.0001)
+        time.sleep(0.0001)
 
   def leds(self, red, yellow, green):
     self.write_pack(0, 'BBB', red, yellow, green)
