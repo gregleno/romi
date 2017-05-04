@@ -43,8 +43,11 @@ def play_notes():
         abort(400)
     if 'notes' not in request.json or type(request.json['notes']) is not unicode:
         abort(400)
-    robot.play_notes(request.json['notes'])
-    return jsonify({})
+    try:
+        robot.play_notes(request.json['notes'])
+        return jsonify({})
+    except IOError:
+        return jsonify({'connected': False})
 
 
 @app.route("/shutdown")
@@ -76,9 +79,11 @@ def motors():
         abort(400)
     left = request.json['left']
     right = request.json['right']
-
-    robot.set_motors(left/100., right/100.)
-    return jsonify({})
+    try:
+        robot.move(left/100., right/100.)
+        return jsonify({})
+    except IOError:
+        return jsonify({'connected': False})
 
 
 @app.route('/rominet/api/status')
