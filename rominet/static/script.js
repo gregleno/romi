@@ -23,18 +23,32 @@ function poll() {
 }
 
 function update_status(json) {
-  $("#button0").html(json["buttons"][0] ? '1' : '0')
-  $("#button1").html(json["buttons"][1] ? '1' : '0')
-  $("#button2").html(json["buttons"][2] ? '1' : '0')
+    try {
+      if(json["connected"]) {
+          $("#button0").html(json["buttons"][0] ? '1' : '0')
+          $("#button1").html(json["buttons"][1] ? '1' : '0')
+          $("#button2").html(json["buttons"][2] ? '1' : '0')
+          $("#battery").html(json["battery"])
+          $("#yaw").html(json["yaw"])
+          $("#position").html(json["position"])
+          $("#encoders0").html(json["encoders"][0])
+          $("#encoders1").html(json["encoders"][1])
+      } else {
+          $("#button0").html()
+          $("#button1").html()
+          $("#button2").html()
+          $("#battery").html()
+          $("#yaw").html()
+          $("#position").html()
+          $("#encoders0").html()
+          $("#encoders1").html()
 
-  $("#battery").html(json["battery"])
+      }
+  } catch(err) {
 
-  $("#yaw").html(json["yaw"])
+  }
 
-  $("#encoders0").html(json["encoders"][0])
-  $("#encoders1").html(json["encoders"][1])
-
-  setTimeout(poll, 1000)
+    setTimeout(poll, 100)
 }
 
 function touchmove(e) {
@@ -46,6 +60,7 @@ function touchmove(e) {
 function mousedown(e) {
   e.preventDefault()
   mouse_dragging = true
+  dragTo(e.pageX, e.pageY)
 }
 
 function mouseup(e) {
