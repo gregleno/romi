@@ -5,12 +5,23 @@ from time import sleep
 from robot import Robot
 from robot_wii_controler import RobotWiiControler
 import os
+from webserver import run_web_server
+from threading import Thread
 
 
 def main():
+    rob = Robot()
 
+    thread = Thread(target=control_loop, args=[rob])
+    thread.setDaemon(True)
+    thread.start()
+
+    run_web_server(rob)
+
+
+def control_loop(rob):
     robot_wii_controler = None
-    robot = Robot()
+    robot = rob
 
     try:
         log = logging.getLogger('romi')
