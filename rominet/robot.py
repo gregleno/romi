@@ -75,6 +75,9 @@ class Robot:
     def set_leds(self, red, yellow, green):
         self.a_star.leds(red, yellow, green)
 
+    def reset_odometry(self):
+        self.odometer.reset_odometry()
+
     def play_notes(self, notes):
         self.a_star.play_notes(notes)
 

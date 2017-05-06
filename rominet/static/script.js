@@ -148,6 +148,12 @@ function setLeds() {
   })
 }
 
+function resetOdometry() {
+  $.ajax({url: "rominet/api/reset_odometry",
+          type: 'GET',
+  })
+}
+
 function playNotes() {
   notes = $('#notes').val()
   var data = {

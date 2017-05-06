@@ -45,8 +45,18 @@ class Speedometer(object):
         self.max_speed_right = 0
         self.speed_left = 0
         self.speed_right = 0
+        self.velocity = 0
         self.ticks_threshold = 10
         self.time_threshold = 200
+
+    def reset(self):
+        self.last_count_left = 0
+        self.last_count_right = 0
+        self.last_time_ms = 0
+        self.max_speed_left = 0
+        self.max_speed_right = 0
+        self.speed_left = 0
+        self.speed_right = 0
         self.velocity = 0
 
     def update(self, encoder_left, encoder_right, current_time):
@@ -82,6 +92,16 @@ class PositionMeter(object):
         self.omega = 0
         self.dist = 0
         self.threshold = 10
+
+    def reset(self):
+        self.last_count_left = 0
+        self.last_count_right = 0
+        self.last_time_ms = 0
+        self.yaw = 0
+        self.x = 0
+        self.y = 0
+        self.omega = 0
+        self.dist = 0
 
     def update(self, encoder_left, encoder_right, current_time):
         delta_time_ms = current_time - self.last_time_ms
@@ -124,6 +144,10 @@ class Odometer(object):
         time_ms = current_time_ms()
         self.speedometer.update(count_left, count_right, time_ms)
         self.pos.update(count_left, count_right, time_ms)
+
+    def reset_odometry(self):
+        self.speedometer.reset()
+        self.pos.reset()
 
     def get_position_XY(self):
         return self.pos.x, self.pos.y

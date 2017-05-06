@@ -63,6 +63,12 @@ def reboot():
     return redirect("/shutdown")
 
 
+@app.route('/rominet/api/reset_odometry', methods=['GET'])
+def reset_odometry():
+    robot.reset_odometry()
+    return jsonify({})
+
+
 # TODO only return this for api calls
 @app.errorhandler(404)
 def not_found(error):
