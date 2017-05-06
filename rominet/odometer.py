@@ -13,46 +13,108 @@ def current_time_ms():
     return int(round(time.time() * 1000))
 
 
+# width between wheels in millimeters
+WHEEL_DISTANCE_MM = 142.5
+# Distance travelled for per encoder click in millimeters
+DISTANCE_PER_TICK_MM = .152505
+
+
 # Function relative_angle(angleRef, angle) returns the shortest relative
 # angle from a reference angle "angleRef" to an angle "angle". The retuned
 # relative angle is bound within -Pi < angle < Pi
 def relative_angle(angle_ref, angle):
-    angle_ref = bound_angle(angleRef)
+    angle_ref = bound_angle(angle_ref)
     angle = bound_angle(angle)
 
     if angle - angle_ref > pi:
-        relative_angle = angle - angle_ref - 2 * pi
+        ret = angle - angle_ref - 2 * pi
     elif angle - angle_ref < -pi:
-        relative_angle = angle - angle_ref + 2 * pi
+        ret = angle - angle_ref + 2 * pi
     else:
-        relative_angle = angle - angle_ref
+        ret = angle - angle_ref
 
-    return relative_angle
+    return ret
 
 
-class Odometer:
-
-    def __init__(self, encoders):
-        self.encoders = encoders
-
-        # width between wheels in millimeters
-        self.wheel_distance_mm = 142.5
-        # Distance travelled for per encoder click in millimeters
-        self.distance_per_tick_mm = .152505
-
+class Speedometer(object):
+    def __init__(self):
         self.last_count_left = 0
         self.last_count_right = 0
         self.last_time_ms = 0
-
+        self.max_speed_left = 0
+        self.max_speed_right = 0
         self.speed_left = 0
         self.speed_right = 0
+        self.ticks_threshold = 10
+        self.time_threshold = 200
+        self.velocity = 0
+
+    def update(self, encoder_left, encoder_right, current_time):
+        delta_time_ms = current_time - self.last_time_ms
+        delta_count_left = encoder_left - self.last_count_left
+        delta_count_right = encoder_right - self.last_count_right
+
+        if self.last_time_ms != 0:
+            if (abs(delta_count_left) > self.ticks_threshold or
+                abs(delta_count_right) > self.ticks_threshold or
+                delta_time_ms > self.time_threshold):
+                self.speed_left = 1000 * delta_count_left / delta_time_ms
+                self.speed_right = 1000 * delta_count_right / delta_time_ms
+                self.velocity = 1000 * (delta_count_left + delta_count_right) / delta_time_ms
+                self.max_speed_left = max(self.max_speed_left, abs(self.speed_left))
+                self.max_speed_right = max(self.max_speed_right, abs(self.speed_right))
+            else:
+                return
+
+        self.last_time_ms = current_time
+        self.last_count_left = encoder_left
+        self.last_count_right = encoder_right
+
+
+class PositionMeter(object):
+    def __init__(self):
+        self.last_count_left = 0
+        self.last_count_right = 0
+        self.last_time_ms = 0
         self.yaw = 0
         self.x = 0
         self.y = 0
-        self.v = 0
         self.omega = 0
         self.dist = 0
+        self.threshold = 10
 
+    def update(self, encoder_left, encoder_right, current_time):
+        delta_time_ms = current_time - self.last_time_ms
+        delta_count_left = encoder_left - self.last_count_left
+        delta_count_right = encoder_right - self.last_count_right
+
+        if self.last_time_ms != 0:
+            if abs(delta_count_left) > self.threshold or abs(delta_count_right) > self.threshold:
+                dist_left = delta_count_left * DISTANCE_PER_TICK_MM
+                dist_right = delta_count_right * DISTANCE_PER_TICK_MM
+                distance_center = (dist_left + dist_right) / 2.
+                self.dist += distance_center
+
+                self.x += distance_center * cos(self.yaw)
+                self.y += distance_center * sin(self.yaw)
+
+                delta_yaw = (dist_right - dist_left) / WHEEL_DISTANCE_MM
+                self.yaw = bound_angle(self.yaw + delta_yaw)
+                self.omega = delta_yaw / delta_time_ms
+            else:
+                return
+
+        self.last_time_ms = current_time
+        self.last_count_left = encoder_left
+        self.last_count_right = encoder_right
+
+
+class Odometer(object):
+
+    def __init__(self, encoders):
+        self.encoders = encoders
+        self.pos = PositionMeter()
+        self.speedometer = Speedometer()
         self.thread = None
         self.tracking = False
         self.freq = 100
@@ -60,52 +122,32 @@ class Odometer:
     def _update(self):
         count_left, count_right = self.encoders.read_encoders()
         time_ms = current_time_ms()
-        if self.last_time_ms != 0:
-            delta_time_ms = time_ms - self.last_time_ms
-
-            delta_count_left = count_left - self.last_count_left
-            delta_count_right = count_right - self.last_count_right
-
-            dist_left = delta_count_left * self.distance_per_tick_mm
-            dist_right = delta_count_right * self.distance_per_tick_mm
-            distance_center = (dist_left + dist_right) / 2.
-            self.dist += distance_center
-
-            self.x += distance_center * cos(self.yaw)
-            self.y += distance_center * sin(self.yaw)
-
-            delta_yaw = (dist_right - dist_left) / self.wheel_distance_mm
-            self.yaw = bound_angle(self.yaw + delta_yaw)
-
-            self.speed_left = dist_left / delta_time_ms
-            self.speed_right = dist_right / delta_time_ms
-            self.v = distance_center / delta_time_ms
-            self.omega = delta_yaw / delta_time_ms
-
-        self.last_time_ms = time_ms
-        self.last_count_left = count_left
-        self.last_count_right = count_right
+        self.speedometer.update(count_left, count_right, time_ms)
+        self.pos.update(count_left, count_right, time_ms)
 
     def get_position_XY(self):
-        return self.x, self.y
+        return self.pos.x, self.pos.y
 
     def get_distance(self):
-        return self.dist
+        return self.pos.dist
 
     def get_yaw(self):
-        return self.yaw
+        return self.pos.yaw
 
     def angle_relative_to_yaw(self, angle):
-        return relative_angle(self.yaw, angle)
+        return relative_angle(self.pos.yaw, angle)
 
     def get_omega(self):
-        return self.omega
+        return self.pos.omega
 
     def get_speed(self):
-        return self.v
+        return self.speedometer.velocity
 
-    def getspeed_left_right(self):
-        return self.speed_left, self.speed_right
+    def get_speed_left_right(self):
+        return self.speedometer.speed_left, self.speedometer.speed_right
+
+    def get_max_speed_left_right(self):
+        return self.speedometer.max_speed_left, self.speedometer.max_speed_right
 
     def _tracking_thread(self):
         while self.tracking:
@@ -116,7 +158,6 @@ class Odometer:
         self.tracking = False
         self.thread = None
 
-    # TODO: pause the thread when not moving
     def track_odometry(self, freq=100):
         self.freq = freq
         if self.thread is None:

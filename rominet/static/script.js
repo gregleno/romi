@@ -31,18 +31,12 @@ function update_status(json) {
           $("#battery").html(json["battery"])
           $("#yaw").html(json["yaw"])
           $("#position").html(json["position"])
+          $("#speed").html(json["speed"])
+          $("#maxSpeedLeft").html(json["max_speed_left"])
+          $("#maxSpeedRight").html(json["max_speed_right"])
           $("#encoders0").html(json["encoders"][0])
           $("#encoders1").html(json["encoders"][1])
       } else {
-          $("#button0").html()
-          $("#button1").html()
-          $("#button2").html()
-          $("#battery").html()
-          $("#yaw").html()
-          $("#position").html()
-          $("#encoders0").html()
-          $("#encoders1").html()
-
       }
   } catch(err) {
 

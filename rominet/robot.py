@@ -69,6 +69,9 @@ class Robot:
     def get_speed(self):
         return self.odometer.get_speed()
 
+    def get_max_speed_left_right(self):
+        return self.odometer.get_max_speed_left_right()
+
     def set_leds(self, red, yellow, green):
         self.a_star.leds(red, yellow, green)
 

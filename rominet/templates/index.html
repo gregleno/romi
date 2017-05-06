@@ -14,10 +14,6 @@
 
 <div id="container">
 
-<h1>Raspberry Pi Robot Control Panel</h1>
-
-<p><a href="/rominet/api/reboot" onClick="return shutdown()">Shutdown...</a></p>
-
 <table>
 <tr>
 <th>Buttons</th>
@@ -51,9 +47,20 @@
 </table>
 
 <table>
+<tr><th>Speed</th><td class="wide"><span id="speed"></span></td></tr>
+</table>
+
+<table>
 <tr>
 <th rowspan=2>Encoders</th>
 <td id="encoders0"></td><td id="encoders1"></td>
+</tr>
+</table>
+
+<table>
+<tr>
+<th rowspan=2>max speed</th>
+<td id="maxSpeedLeft"></td><td id="maxSpeedRight"></td>
 </tr>
 </table>
 
@@ -62,6 +69,9 @@
 
 <div id="camera">
 </div>
+
+<p><a href="/rominet/api/reboot" onClick="return shutdown()">Shutdown...</a></p>
+
 
 </div>
 
