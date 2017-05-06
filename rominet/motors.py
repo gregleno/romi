@@ -1,7 +1,4 @@
-import logging
-
-
-class Motors:
+class Motors(object):
 
     def __init__(self, a_star):
         self.a_star = a_star

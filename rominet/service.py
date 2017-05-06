@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 
 import logging
-from time import sleep
-from robot import Robot
-from robot_wii_controler import RobotWiiControler
 import os
-from webserver import run_web_server
 from threading import Thread
+from time import sleep
+from rominet.robot import Robot
+from rominet.robot_wii_controler import RobotWiiControler
+from rominet.webserver import run_web_server
 
 
 def main():

@@ -1,20 +1,23 @@
-import cwiid
 from threading import Thread
 import time
 import logging
 import sys
+import cwiid
 
 
-class WiiRemote:
+class WiiRemote(object):
 
     def __init__(self, wm):
         self.buttons = sys.maxint
         self.nun_buttons = sys.maxint
         self.nun_stick = (sys.maxint, sys.maxint)
         self.active = False
+
         self.buttons_cb = None
         self.nun_buttons_cb = None
         self.nun_stick_cb = None
+        self.nun_stick_disconnected_cb = None
+
         self.wm = wm
         self.led = 0
         self.nun_connected = False
@@ -27,6 +30,8 @@ class WiiRemote:
         self.nun_stick_min_y = 33
         self.nun_stick_center_x = 131
         self.nun_stick_center_y = 128
+
+        self.log = logging.getLogger('romi')
 
     def set_callbacks(self, buttons_cb, nun_buttons_cb, nun_stick_cb, nun_stick_disconnected_cb):
         self.buttons_cb = buttons_cb
@@ -42,8 +47,7 @@ class WiiRemote:
     def get_nun_stick(self):
         if self.nun_connected:
             return self._normalize_nun_stick(self.nun_stick)
-        else:
-            return None
+        return None
 
     @staticmethod
     def connect():
@@ -65,8 +69,7 @@ class WiiRemote:
             time.sleep(.2)
             wm.rumble = False
             return WiiRemote(wm)
-        else:
-            return None
+        return None
 
     def _wiimote_thread(self, freq):
         # TODO: add try catch and call a release callback
@@ -95,7 +98,7 @@ class WiiRemote:
                         try:
                             self.nun_stick_disconnected_cb()
                         except Exception as e:
-                            log.error(e)
+                            self.log.error(e)
 
                     self.nun_connected = False
 
@@ -112,7 +115,7 @@ class WiiRemote:
                     try:
                         self.buttons_cb(buttons)
                     except Exception as e:
-                        log.error(e)
+                        self.log.error(e)
 
                 if buttons & cwiid.BTN_PLUS and buttons & cwiid.BTN_MINUS and buttons & cwiid.BTN_B:
                     # If we start calibration we assume that the nunchuck is at the center
@@ -126,7 +129,7 @@ class WiiRemote:
                     try:
                         self.nun_buttons_cb(nun_buttons)
                     except Exception as e:
-                        log.error(e)
+                        self.log.error(e)
 
             if nun_stick != prev_nun_stick and self.nun_connected:
                 # If calibration is ongoing we do not call the normal callback
@@ -136,7 +139,7 @@ class WiiRemote:
                     try:
                         self.nun_stick_cb(self._normalize_nun_stick(nun_stick))
                     except Exception as e:
-                        log.error(e)
+                        self.log.error(e)
 
             time.sleep(1. / freq)
 
@@ -167,8 +170,8 @@ class WiiRemote:
         time.sleep(.1)
         self.wm.rumble = False
 
-        log.info("Calibration started. Please move the nunchuck in all directions")
-        log.info("Press PLUS MINUS and B to complete calibration")
+        self.log.info("Calibration started. Please move the nunchuck in all directions")
+        self.log.info("Press PLUS MINUS and B to complete calibration")
 
         self.nun_stick_max_x = 0
         self.nun_stick_min_x = sys.maxint
@@ -179,10 +182,10 @@ class WiiRemote:
 
     def _complete_calibration(self):
         self.calibration_ongoing = False
-        log.info("Nunchuck calibration data:")
-        log.info("  Center: %d,%d" % (self.nun_stick_center_x, self.nun_stick_center_y))
-        log.info("  Max: %d,%d" % (self.nun_stick_max_x, self.nun_stick_max_y))
-        log.info("  Min: %d,%d" % (self.nun_stick_min_x, self.nun_stick_min_y))
+        self.log.info("Nunchuck calibration data:")
+        self.log.info("  Center: %d,%d" % (self.nun_stick_center_x, self.nun_stick_center_y))
+        self.log.info("  Max: %d,%d" % (self.nun_stick_max_x, self.nun_stick_max_y))
+        self.log.info("  Min: %d,%d" % (self.nun_stick_min_x, self.nun_stick_min_y))
 
     def _calibration_cb(self, stick):
         x, y = stick

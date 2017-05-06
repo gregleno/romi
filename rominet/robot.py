@@ -1,10 +1,10 @@
-from a_star import AStar
-from motors import Motors
-from odometer import Odometer
-from encoders import Encoders
 import logging
 import time
 from threading import Thread
+from rominet.a_star import AStar
+from rominet.motors import Motors
+from rominet.odometer import Odometer
+from encoders import Encoders
 
 NO_LED = (0, 0, 0)
 ALL_LEDS = (1, 1, 1)
@@ -108,6 +108,6 @@ class Robot:
                 if abs(self.battery_millivolts - battery) > 50:
                     self.log.info("Battery: {} mV".format(battery))
                     self.battery_millivolts = battery
-            except:
+            except IOError:
                 pass
             time.sleep(2)

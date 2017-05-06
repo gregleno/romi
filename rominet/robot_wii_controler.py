@@ -1,14 +1,14 @@
 #!/usr/bin/env python
 
+import logging
+import math
 import cwiid
 import time
-import logging
 from wiiremote import WiiRemote
 from robot import Robot
-import math
 
 
-class RobotWiiControler:
+class RobotWiiControler(object):
 
     def __init__(self, robot):
         self.log = logging.getLogger('romi')
@@ -109,8 +109,8 @@ def main():
     log = logging.getLogger('romi')
     log.setLevel(logging.INFO)
     log.addHandler(logging.StreamHandler())
-    robot = Robot()
-    rwc = RobotWiiControler(robot)
+    RobotWiiControler(Robot())
+
 
 if __name__ == "__main__":
     main()

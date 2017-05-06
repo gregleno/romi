@@ -1,11 +1,9 @@
 #!/usr/bin/env python
 
-from flask import Flask, jsonify, make_response, request, abort, render_template, redirect
-import json
-import time
-import os
-from robot import Robot
 import logging
+import os
+from flask import Flask, jsonify, make_response, request, abort, render_template, redirect
+from rominet.robot import Robot
 
 
 app = Flask("rominet")
@@ -59,7 +57,7 @@ def rebooting():
 def reboot():
     try:
         robot.stop()
-    except:
+    except IOError:
         pass
     os.system("sudo halt")
     return redirect("/shutdown")
@@ -91,7 +89,6 @@ def get_status():
     try:
         data = {'battery': robot.get_battery(),
                 'connected': True,
-                'buttons': robot.read_buttons(),
                 'position': robot.get_position_XY(),
                 'encoders': robot.get_encoders(),
                 'speed': robot.get_speed(),
@@ -114,4 +111,4 @@ def run_web_server(rob):
 
 
 if __name__ == '__main__':
-    run_web_server(RobotTest())
+    run_web_server(Robot())
