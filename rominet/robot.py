@@ -18,9 +18,9 @@ class Robot:
     def __init__(self):
         # TODO: check if a star is available
         self.a_star = AStar()
-        self.motors = Motors(self.a_star)
         self.encoders = Encoders(self.a_star)
         self.odometer = Odometer(self.encoders)
+        self.motors = Motors(self.a_star, self.odometer)
 
         self.log = logging.getLogger('romi')
         self.alive = True
@@ -28,6 +28,7 @@ class Robot:
         t = Thread(target=self._monitor_status)
         t.daemon = True
         t.start()
+        self.move(0, 0)
 
     def move(self, left, right):
         self.odometer.track_odometry(100)

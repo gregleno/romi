@@ -1,4 +1,4 @@
-class Encoders:
+class Encoders(object):
 
     def __init__(self, a_star):
         self.a_star = a_star
