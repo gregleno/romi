@@ -28,10 +28,10 @@ class Robot:
         t = Thread(target=self._monitor_status)
         t.daemon = True
         t.start()
-        self.move(0, 0)
+        self.set_speed_target(0, 0)
 
-    def move(self, left, right):
-        self.motors.move(left, right)
+    def set_speed_target(self, left, right):
+        self.motors.set_speed_target(left, right)
 
     def stop(self):
         self.alive = False

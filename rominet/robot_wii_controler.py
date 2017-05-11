@@ -32,7 +32,7 @@ class RobotWiiControler(object):
             self.wiimote.remove_callbacks()
             self.wiimote.release()
             self.wiimote = None
-        self.robot.move(0, 0)
+        self.robot.set_speed_target(0, 0)
 
     def buttons_cb(self, buttons):
         if buttons & cwiid.BTN_1 and buttons & cwiid.BTN_B:
@@ -48,7 +48,7 @@ class RobotWiiControler(object):
         self._move_robot_with_stick(stick)
 
     def nun_stick_disconnected_cb(self):
-        self.robot.move(0, 0)
+        self.robot.set_speed_target(0, 0)
 
     def _move_robot_with_stick(self, stick):
         x = stick[0]
@@ -75,7 +75,7 @@ class RobotWiiControler(object):
         if not self.nun_btn_z:
             left *= 0.4
             right *= 0.4
-        self.robot.move(left, right)
+        self.robot.set_speed_target(left, right)
 
     def _move_robot_with_buttons(self, buttons):
         speed = 0.3
@@ -84,25 +84,25 @@ class RobotWiiControler(object):
 
         if (buttons & cwiid.BTN_RIGHT) and (buttons & cwiid.BTN_DOWN):
             print "{}".format(cwiid.BTN_RIGHT | cwiid.BTN_DOWN)
-            self.robot.move(speed, 0)
+            self.robot.set_speed_target(speed, 0)
         elif (buttons & cwiid.BTN_RIGHT) and (buttons & cwiid.BTN_UP):
-            self.robot.move(0, speed)
+            self.robot.set_speed_target(0, speed)
         elif (buttons & cwiid.BTN_LEFT) and (buttons & cwiid.BTN_UP):
-            self.robot.move(0, -speed)
+            self.robot.set_speed_target(0, -speed)
         elif (buttons & cwiid.BTN_LEFT) and (buttons & cwiid.BTN_DOWN):
-            self.robot.move(-speed, 0)
+            self.robot.set_speed_target(-speed, 0)
         elif buttons & cwiid.BTN_RIGHT:
-            self.robot.move(speed, speed)
+            self.robot.set_speed_target(speed, speed)
         elif buttons & cwiid.BTN_LEFT:
-            self.robot.move(-speed, -speed)
+            self.robot.set_speed_target(-speed, -speed)
         elif buttons & cwiid.BTN_UP:
-            self.robot.move(-speed, speed)
+            self.robot.set_speed_target(-speed, speed)
         elif buttons & cwiid.BTN_DOWN:
-            self.robot.move(speed, -speed)
+            self.robot.set_speed_target(speed, -speed)
         else:
             if self.control_robot_with_buttons:
                 self.control_robot_with_buttons = False
-                self.robot.move(0, 0)
+                self.robot.set_speed_target(0, 0)
 
 
 def main():

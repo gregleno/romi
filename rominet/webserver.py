@@ -84,7 +84,7 @@ def motors():
     left = request.json['left']
     right = request.json['right']
     try:
-        robot.move(left/100., right/100.)
+        robot.set_speed_target(left/100., right/100.)
         return jsonify({})
     except IOError:
         return jsonify({'connected': False})

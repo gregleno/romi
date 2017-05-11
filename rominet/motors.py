@@ -15,7 +15,7 @@ class Motors(object):
         self.last_send_right = 0
         self.odometer.set_speed_measurement_callback(self._speed_measurement_callback)
 
-    def move(self, left, right):
+    def set_speed_target(self, left, right):
         self.odometer.track_odometry()
         self.set_point_left = left * self.max_speed
         self.set_point_right = right * self.max_speed
