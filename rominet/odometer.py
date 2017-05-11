@@ -1,6 +1,6 @@
 import time
 from collections import deque
-from threading import Thread
+from threading import Thread, Event
 from math import pi, cos, sin
 
 
@@ -131,7 +131,7 @@ class Odometer(object):
         self.pos = PositionMeter()
         self.speedometer = Speedometer()
         self.thread = None
-        self.tracking = False
+        self.tracking = Event()
         self.speed_measurement_callback = None
         self.freq = 100
 
@@ -177,19 +177,18 @@ class Odometer(object):
         return self.speedometer.max_speed_left, self.speedometer.max_speed_right
 
     def _tracking_thread(self):
-        while self.tracking:
+        while self.tracking.wait():
             self._update()
             time.sleep(1. / self.freq)
 
     def stop_tracking(self):
-        self.tracking = False
-        self.thread = None
+        self.tracking.clear()
 
     def track_odometry(self, freq=100):
         self.freq = freq
+        self.tracking.set()
         if self.thread is None:
             self.encoders.reset()
-            self.tracking = True
             self.thread = Thread(target=self._tracking_thread)
             self.thread.daemon = True
             self.thread.start()

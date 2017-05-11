@@ -31,11 +31,9 @@ class Robot:
         self.move(0, 0)
 
     def move(self, left, right):
-        self.odometer.track_odometry(100)
         self.motors.move(left, right)
 
     def stop(self):
-        self.odometer.stop_tracking()
         self.alive = False
         if self.is_romi_board_connected():
             self.motors.stop()
