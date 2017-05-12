@@ -11,12 +11,13 @@ class Motors(object):
         self.pid_right = PID(0.1, 3, 0, self.max_speed)
         self.set_point_left = 0
         self.set_point_right = 0
-        self.last_send_left = 0
-        self.last_send_right = 0
+        self.last_send_left = -1000
+        self.last_send_right = -1000
         self.odometer.set_speed_measurement_callback(self._speed_measurement_callback)
 
     def set_speed_target(self, left, right):
-        self.odometer.track_odometry()
+        if left != 0 and right != 0:
+            self.odometer.track_odometry()
         self.set_point_left = left * self.max_speed
         self.set_point_right = right * self.max_speed
 
@@ -29,9 +30,8 @@ class Motors(object):
 
         left_cmd = (int)(left_speed_cmd * self.max_cmd / self.max_speed)
         right_cmd = (int)(right_speed_cmd * self.max_cmd / self.max_speed)
-
         if self.set_point_left == 0 and self.set_point_right == 0:
-            if left_cmd < 20 and right_cmd < 20:
+            if abs(left_cmd) < 20 and abs(right_cmd) < 20:
                 left_cmd = 0
                 right_cmd = 0
 
@@ -40,7 +40,9 @@ class Motors(object):
             self.last_send_right = right_cmd
             self._send_command_to_motors(left_cmd, right_cmd)
 
-    def _send_command_to_motors(left, right):
-        self.a_star.motors(left_cmd, right_cmd)
-        if left_cmd == 0 and right_cmd == 0:
+    def _send_command_to_motors(self, left, right):
+        self.a_star.motors(left, right)
+        if left == 0 and right == 0:
             self.odometer.stop_tracking()
+            self.pid_left.reset()
+            self.pid_right.reset()

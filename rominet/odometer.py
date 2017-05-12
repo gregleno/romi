@@ -132,6 +132,7 @@ class Odometer(object):
         self.speedometer = Speedometer()
         self.thread = None
         self.tracking = Event()
+        self.tracking.clear()
         self.speed_measurement_callback = None
         self.freq = 100
 
@@ -177,8 +178,9 @@ class Odometer(object):
         return self.speedometer.max_speed_left, self.speedometer.max_speed_right
 
     def _tracking_thread(self):
-        while self.tracking.wait():
+        while True:
             self._update()
+            self.tracking.wait()
             time.sleep(1. / self.freq)
 
     def stop_tracking(self):
