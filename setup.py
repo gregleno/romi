@@ -15,7 +15,6 @@ setup(name='rominet',
       packages=['rominet'],
       entry_points={
         'console_scripts': ['rominet-service=rominet.service:main'],
-        'console_scripts': ['rominet-wii=rominet.robot_wii_controler:main']
       },
       install_requires=[
        'pytest-runner'
