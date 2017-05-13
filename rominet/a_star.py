@@ -1,8 +1,11 @@
 # Copyright Pololu Corporation.  For more information, see https://www.pololu.com/
-import smbus
 import struct
 import time
 from multiprocessing import Lock
+try:
+    import smbus
+except:
+    pass
 
 
 bus_lock = Lock()

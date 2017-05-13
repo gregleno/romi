@@ -9,16 +9,40 @@ function init() {
   $("#joystick").bind("touchmove",touchmove)
   $("#joystick").bind("touchend",touchend)
   $("#joystick").bind("mousedown",mousedown)
-  $(document).bind("mousemove",mousemove)
-  $(document).bind("mouseup",mouseup)
+  $("#joystick").bind("mousemove",mousemove)
+  $("#joystick").bind("mouseup",mouseup)
+  $('#container').UISlider.bind("mouseup",function (event) {
+      stop_motors = false
+      setMotors(0, 0)
+      $('.ui-slider').UISlider('value', 100)
+  })
+  var s = $('.ui-slider').UISlider({
+      min: 0,
+      max: 200,
+      value: 100,
+      smooth: true,
+      vertical: true,
+  }).on('thumbmove', function (event, value) {
+      stop_motors = false
+      x = Number((value - 100).toFixed(0));
+      setMotors(x, x)
+  }).on('end', function (event) {
+      stop_motors = false
+      setMotors(0, 0)
+      $('.value').text(100);
+  });
 }
 
 function poll() {
-  $.ajax({url: "/rominet/api/status"}).done(update_status)
-  if(stop_motors && !block_set_motors)
-  {
-    setMotors(0,0);
-    stop_motors = false
+  try {
+      $.ajax({url: "/rominet/api/status"}).done(update_status)
+      if(stop_motors && !block_set_motors) {
+        stop_motors = false
+        setMotors(0,0);
+      }
+      setTimeout(poll, 1000)
+  } catch(err) {
+    setTimeout(poll, 2000)
   }
 }
 
@@ -30,19 +54,17 @@ function update_status(json) {
           $("#button2").html(json["buttons"][2] ? '1' : '0')
           $("#battery").html(json["battery"])
           $("#yaw").html(json["yaw"])
-          $("#position").html(json["position"])
           $("#speed").html(json["speed"])
-          $("#maxSpeedLeft").html(json["max_speed_left"])
-          $("#maxSpeedRight").html(json["max_speed_right"])
-          $("#encoders0").html(json["encoders"][0])
-          $("#encoders1").html(json["encoders"][1])
+          $("#positionX").html(json["position"][0])
+          $("#maxSpeedLeft").html(json["max_speed"][0])
+          $("#encoderLeft").html(json["encoders"][0])
+          $("#positionY").html(json["position"][1])
+          $("#maxSpeedRight").html(json["max_speed"][1])
+          $("#encoderRight").html(json["encoders"][1])
       } else {
       }
   } catch(err) {
-
   }
-
-    setTimeout(poll, 100)
 }
 
 function touchmove(e) {
@@ -64,6 +86,7 @@ function mouseup(e) {
     mouse_dragging = false
     stop_motors = true
   }
+  setMotors(0,0);
 }
 
 function mousemove(e) {
@@ -169,6 +192,7 @@ function playNotes() {
 
 function shutdown() {
   if (confirm("Really shut down the Raspberry Pi?"))
-    return true
-  return false
+      $.ajax({url: "/rominet/api/shutdown",
+              type: 'GET',
+      })
 }

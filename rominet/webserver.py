@@ -48,12 +48,7 @@ def play_notes():
         return jsonify({'connected': False})
 
 
-@app.route("/shutdown")
-def rebooting():
-    return "Shutting down! You can remove power when the green LED stops flashing"
-
-
-@app.route('/rominet/api/reboot', methods=['GET'])
+@app.route('/rominet/api/shutdown', methods=['GET'])
 def reboot():
     try:
         robot.stop()
@@ -98,8 +93,7 @@ def get_status():
                 'position': robot.get_position_XY(),
                 'encoders': robot.get_encoders(),
                 'speed': robot.get_speed(),
-                'max_speed_left': robot.get_max_speed_left_right()[0],
-                'max_speed_right': robot.get_max_speed_left_right()[1],
+                'max_speed': robot.get_max_speed_left_right(),
                 'distance': robot.get_distance(),
                 'yaw': robot.get_yaw(),
                 'buttons': robot.read_buttons()}
@@ -108,12 +102,12 @@ def get_status():
         return jsonify({'connected': False})
 
 
-def run_web_server(rob):
+def run_web_server(rob, debug=False):
     global robot
     robot = rob
     log = logging.getLogger('werkzeug')
     log.setLevel(logging.ERROR)
-    app.run(debug=False, host="0.0.0.0", threaded=True)
+    app.run(debug=debug, host="0.0.0.0", threaded=True)
 
 
 if __name__ == '__main__':

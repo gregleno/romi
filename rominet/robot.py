@@ -1,6 +1,5 @@
 import logging
 import time
-from threading import Thread
 from rominet.a_star import AStar
 from rominet.motors import Motors
 from rominet.odometer import Odometer
@@ -13,28 +12,21 @@ LED2 = (0, 1, 0)
 LED3 = (0, 0, 1)
 
 
-class Robot:
+class Robot(object):
 
     def __init__(self):
-        # TODO: check if a star is available
         self.a_star = AStar()
         self.encoders = Encoders(self.a_star)
         self.odometer = Odometer(self.encoders)
         self.motors = Motors(self.a_star, self.odometer)
-
         self.log = logging.getLogger('romi')
-        self.alive = True
-        self.battery_millivolts = 0
-        t = Thread(target=self._monitor_status)
-        t.daemon = True
-        t.start()
+
         self.set_speed_target(0, 0)
 
     def set_speed_target(self, left, right):
         self.motors.set_speed_target(left, right)
 
     def stop(self):
-        self.alive = False
         if self.is_romi_board_connected():
             self.motors.stop()
 
@@ -93,23 +85,3 @@ class Robot:
             return True
         except IOError:
             return False
-
-    def _monitor_status(self):
-        old_dist = 0
-        old_pos = (0, 0)
-        while self.alive:
-            try:
-                pos = self.get_position_XY()
-                dist = self.get_distance()
-                if old_pos != pos or old_dist != dist:
-                    self.log.info("X,Y = {} dist={}".format(pos, dist))
-                    old_dist = dist
-                    old_pos = pos
-
-                battery, = self.a_star.read_battery_millivolts()
-                if abs(self.battery_millivolts - battery) > 50:
-                    self.log.info("Battery: {} mV".format(battery))
-                    self.battery_millivolts = battery
-            except IOError:
-                pass
-            time.sleep(2)

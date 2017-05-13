@@ -1,79 +1,103 @@
 <!DOCTYPE html>
 <html lang='en'>
-<head>
-<meta charset='utf-8'>
-<meta content='width=device-width, initial-scale=1' name='viewport'>
-<link rel="stylesheet" media="all" href="static/main.css">
-<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
-<script src="static/script.js?7"></script>
+    <head>
+        <meta charset='utf-8'>
+        <meta content='width=device-width, initial-scale=1' name='viewport'>
+        <link rel="stylesheet" media="all" href="static/main.css">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+              integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
+              crossorigin="anonymous">
+        <link href="static/jquery.ui-slider.css" rel="stylesheet" >
+        <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
+                integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+                crossorigin="anonymous"></script>
+        <script src="static/script.js?7"></script>
+        <script src="static/jquery.ui-slider.js"></script>
+        <title>Rominet Control Panel</title>
+    </head>
 
-<title>Raspberry Pi Robot Control Panel</title>
-</head>
+    <body onload="init();">
 
-<body onload="init();">
+        <div id="container">
+            <div class="row">
+                <div class="col-xs-4">
+                    <table class="table table-striped">
+                        <tr>
+                            <th>Buttons</th>
+                            <td class="center" id="button0"></td>
+                            <td class="center" id="button1"></td>
+                            <td class="center" id="button2"></td>
+                        </tr>
 
-<div id="container">
+                        <tr><th>LEDs</th>
+                            <td class="center"><input type="checkbox" id="led_red" onchange="setLeds()"></td>
+                            <td class="center"><input type="checkbox" id="led_green" onchange="setLeds()"></td>
+                            <td class="center"><input type="checkbox" id="led_yellow" onchange="setLeds()"></td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-4">
+                    <textarea class="form-control" rows="1" id="notes" maxlength="14" >l16ceg>c</textarea>
+                </div>
+                <div class="col-xs-4">
+                    <button class="btn btn-primary" type="submit" onclick="playNotes()">Play</button>
+                </div>
+            </div>
 
-<table>
-<tr>
-<th>Buttons</th>
-<td class="center" id="button0"></td>
-<td class="center" id="button1"></td>
-<td class="center" id="button2"></td>
-</tr>
+            <div class="row">
+                <div class="col-xs-4">
+                    <table class="table table-striped">
+                        <tr>
+                            <td>Battery</td>
+                            <td>Speed</td>
+                            <td>Yaw</td>
+                        </tr>
 
-<tr><th>LEDs</th>
-<td class="center"><input type="checkbox" id="led_red" onchange="setLeds()"></td>
-<td class="center"><input type="checkbox" id="led_green" onchange="setLeds()"></td>
-<td class="center"><input type="checkbox" id="led_yellow" onchange="setLeds()"></td>
-</tr>
-</table>
+                        <tr>
+                            <td class="wide"><span id="battery"></span> mV</td>
+                            <td class="wide"><span id="speed"></span></td>
+                            <td class="wide"><span id="yaw"></span></td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-4">
+                    <table class="table table-striped">
+                        <tr>
+                            <td>Position</td>
+                            <td>Encoders</td>
+                            <td>max speed</td>
+                        </tr>
 
-<p>
-<input type="text" id="notes" maxlength="14" value="l16ceg>c">
-<button onclick="playNotes()">Play</button>
-</p>
+                        <tr>
+                            <td class="wide"><span id="positionX"></span> , <span id="positionY"></span></td>
+                            <td class="wide"><span id="encoderLeft"></span> , <span id="encoderRight"></span></td>
+                            <td class="wide"><span id="maxSpeedLeft"></span> , <span id="maxSpeedRight"></span></td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-4">
+                    <div id="joystick"></div>
+                </div>
+                <div class="col-xs-4">
+                    <div data-target="#slidervalue" class="ui-slider"></div>
+                </div>
+            </div>
 
-<table>
-<tr><th>Battery</th><td class="wide"><span id="battery"></span> mV</td></tr>
-</table>
-
-<table>
-<tr><th>Yaw</th><td class="wide"><span id="yaw"></span></td></tr>
-</table>
-
-<table>
-<tr><th>Position</th><td class="wide"><span id="position"></span></td></tr>
-</table>
-
-<table>
-<tr><th>Speed</th><td class="wide"><span id="speed"></span></td></tr>
-</table>
-
-<table>
-<tr>
-<th rowspan=2>Encoders</th>
-<td id="encoders0"></td><td id="encoders1"></td>
-</tr>
-</table>
-
-<table>
-<tr>
-<th rowspan=2>max speed</th>
-<td id="maxSpeedLeft"></td><td id="maxSpeedRight"></td>
-</tr>
-</table>
-
-<div id="joystick">
-</div>
-
-<div id="camera">
-</div>
-
-<p><a href="/rominet/api/reboot" onClick="return shutdown()">Shutdown...</a></p>
-<button type="button" onClick="resetOdometry()">Reset Odometry</button>
-
-
-</div>
-
+            <div class="row">
+                <div class="col-xs-4">
+                    <button type="button" class="btn btn-danger" onClick="shutdown()">Shutdown</button>
+                </div>
+                <div class="col-xs-4">
+                    <button type="button" class="btn btn-warning" onClick="resetOdometry()">Reset Odometry</button>
+                </div>
+            </div>
+        </div>
+    </body>
 </html>
