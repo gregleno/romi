@@ -2,6 +2,8 @@
 stop_motors = true
 block_set_motors = false
 mouse_dragging = false
+yaw = 0
+pollTime = 1000
 
 function init() {
   poll()
@@ -40,31 +42,51 @@ function poll() {
         stop_motors = false
         setMotors(0,0);
       }
-      setTimeout(poll, 1000)
+      setTimeout(poll, pollTime)
   } catch(err) {
     setTimeout(poll, 2000)
   }
 }
 
 function update_status(json) {
-    try {
+    //try {
       if(json["connected"]) {
           $("#button0").html(json["buttons"][0] ? '1' : '0')
           $("#button1").html(json["buttons"][1] ? '1' : '0')
           $("#button2").html(json["buttons"][2] ? '1' : '0')
           $("#battery").html(json["battery"])
-          $("#yaw").html(json["yaw"])
+          $("#yaw").html(Number((json["yaw"]).toFixed(2)))
           $("#speed").html(json["speed"])
-          $("#positionX").html(json["position"][0])
+          $("#positionX").html(Number((json["position"][0]).toFixed(2)))
           $("#maxSpeedLeft").html(json["max_speed"][0])
           $("#encoderLeft").html(json["encoders"][0])
-          $("#positionY").html(json["position"][1])
+          $("#positionY").html(Number((json["position"][1]).toFixed(2)))
           $("#maxSpeedRight").html(json["max_speed"][1])
           $("#encoderRight").html(json["encoders"][1])
+
+          var yawDeg = json["yaw"] * 180 / 3.14159;
+          var elem = $("#compassArrowYaw");
+          var from = yaw
+          var to = yawDeg
+          if (from - to > 300) {
+              to = to + 360;
+          } else if (to - from > 300) {
+              to = to - 360;
+          }
+
+           $({deg: from}).animate({deg: to}, {
+               duration: pollTime,
+               step: function(now){
+                   elem.css({
+                       transform: "rotate(" + now + "deg)"
+                   });
+               }
+           });
+           yaw = yawDeg
       } else {
       }
-  } catch(err) {
-  }
+  //} catch(err) {
+  //}
 }
 
 function touchmove(e) {
