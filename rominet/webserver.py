@@ -2,7 +2,7 @@
 
 import logging
 import os
-from flask import Flask, jsonify, make_response, request, abort, render_template, redirect
+from flask import Flask, jsonify, make_response, request, abort, render_template, redirect, Response
 from rominet.robot import Robot
 
 
@@ -46,6 +46,19 @@ def play_notes():
         return jsonify({})
     except IOError:
         return jsonify({'connected': False})
+
+
+def get_image_from_robot():
+    while True:
+        frame = robot.get_camera_frame()
+        yield (b'--frame\r\n'
+               b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
+
+
+@app.route('/rominet/api/camera_feed/<int:width>')
+def camera_feed(width):
+    return Response(get_image_from_robot(),
+                    mimetype='multipart/x-mixed-replace; boundary=frame')
 
 
 @app.route('/rominet/api/shutdown', methods=['GET'])

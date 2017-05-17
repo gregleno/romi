@@ -11,9 +11,10 @@ class FakeRobot(Robot):
     def __init__(self):
         self.position = (0, 0)
         self.start_time = int(round(time.time() * 1000))
+        self.frames = [open('images/' + f + '.jpg', 'rb').read() for f in ['1', '2', '3']]
 
     def set_speed_target(self, left, right):
-        log.info("Set speed %f:%f" % (left, right))
+        log.info("Set speed %f:%f", left, right)
 
     def stop(self):
         pass
@@ -36,6 +37,9 @@ class FakeRobot(Robot):
 
     def get_yaw(self):
         return (self.delta_time_ms() / 4000.) % 6.28
+
+    def get_camera_frame(self):
+        return self.frames[int(time.time()) % 3]
 
     def get_distance(self):
         return self.delta_time_s()

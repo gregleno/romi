@@ -75,7 +75,7 @@ function update_status(json) {
           }
 
            $({deg: from}).animate({deg: to}, {
-               duration: pollTime,
+               duration: 600,
                step: function(now){
                    elem.css({
                        transform: "rotate(" + now + "deg)"
