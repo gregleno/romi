@@ -48,16 +48,17 @@ def play_notes():
         return jsonify({'connected': False})
 
 
-def get_image_from_robot():
+def gen(robot):
+    """Video streaming generator function."""
     while True:
         frame = robot.get_camera_frame()
         yield (b'--frame\r\n'
                b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
 
 
-@app.route('/rominet/api/camera_feed/<int:width>')
-def camera_feed(width):
-    return Response(get_image_from_robot(),
+@app.route('/rominet/api/camera_feed')
+def camera_feed(width=400):
+    return Response(gen(robot),
                     mimetype='multipart/x-mixed-replace; boundary=frame')
 
 
@@ -118,8 +119,8 @@ def get_status():
 def run_web_server(rob, debug=False):
     global robot
     robot = rob
-    log = logging.getLogger('werkzeug')
-    log.setLevel(logging.ERROR)
+    # log = logging.getLogger('werkzeug')
+    # log.setLevel(logging.ERROR)
     app.run(debug=debug, host="0.0.0.0", threaded=True)
 
 

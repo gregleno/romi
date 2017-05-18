@@ -2,6 +2,7 @@ import logging
 import time
 from rominet.a_star import AStar
 from rominet.motors import Motors
+from rominet.camera import Camera
 from rominet.odometer import Odometer
 from encoders import Encoders
 
@@ -19,6 +20,8 @@ class Robot(object):
         self.encoders = Encoders(self.a_star)
         self.odometer = Odometer(self.encoders)
         self.motors = Motors(self.a_star, self.odometer)
+        # TODO: check if a camera is connected
+        self.camera = Camera()
         self.log = logging.getLogger('romi')
 
         self.set_speed_target(0, 0)
@@ -29,6 +32,9 @@ class Robot(object):
     def stop(self):
         if self.is_romi_board_connected():
             self.motors.stop()
+
+    def get_camera_frame(self):
+        return self.camera.get_camera_frame()
 
     def read_buttons(self):
         return self.a_star.read_buttons()
