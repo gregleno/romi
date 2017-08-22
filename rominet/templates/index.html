@@ -2,21 +2,23 @@
 <html lang='en'>
     <head>
         <meta charset='utf-8'>
-        <meta content='width=device-width, initial-scale=1' name='viewport'>
         <link rel="stylesheet" media="all" href="static/main.css">
-        <link rel="stylesheet" href="static/bootstrap-3.3.7/css/bootstrap.min.css">
-        <link href="static/jquery.ui-slider.css" rel="stylesheet" >
-        <link href="static/compass.css" rel="stylesheet" >
         <script src="static/jquery-3.2.1.min.js"></script>
-        <script src="static/bootstrap-3.3.7/js/bootstrap.min.js"
-                crossorigin="anonymous"></script>
         <script src="static/script.js?7"></script>
-        <script src="static/jquery.ui-slider.js"></script>
-        <script src="static/compass.js"></script>
+        <script type="text/javascript" src="static/jqwidgets/jqxcore.js"></script>
+        <script type="text/javascript" src="static/jqwidgets/jqxbuttons.js"></script>
         <title>Rominet Control Panel</title>
     </head>
 
     <body onload="init();">
+        <script type="text/javascript">
+            $(document).ready(function () {
+                $("#myButton").jqxButton(
+               { width: '555px', height: '35px', theme: 'darkblue' }
+               );
+            });
+         </script>
+         <input type="button" value="Click Me" id='myButton' />
 
         <div id="container">
             <div class="row">
