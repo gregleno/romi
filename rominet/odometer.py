@@ -75,7 +75,6 @@ class PositionMeter(object):
         self.last_count_right = 0
         self.last_time_ms = 0
         self.dist = 0
-        self.threshold = 0
         self.fifo = deque([(current_time_ms(), 0, 0, 0, 0)], maxlen=1000)
 
     def reset(self):
@@ -92,20 +91,19 @@ class PositionMeter(object):
         last_time_ms, x, y, yaw, omega = self.fifo[0]
 
         if self.last_time_ms != 0:
-            if abs(delta_count_left) > self.threshold or abs(delta_count_right) > self.threshold:
-                dist_left = delta_count_left * DISTANCE_PER_TICK_MM
-                dist_right = delta_count_right * DISTANCE_PER_TICK_MM
-                distance_center = (dist_left + dist_right) / 2.
-                self.dist += distance_center
+            dist_left = delta_count_left * DISTANCE_PER_TICK_MM
+            dist_right = delta_count_right * DISTANCE_PER_TICK_MM
+            distance_center = (dist_left + dist_right) / 2.
+            self.dist += distance_center
 
-                x += distance_center * cos(yaw)
-                y += distance_center * sin(yaw)
+            x += distance_center * cos(yaw)
+            y += distance_center * sin(yaw)
 
-                delta_yaw = (dist_right - dist_left) / WHEEL_DISTANCE_MM
-                yaw = bound_angle(yaw + delta_yaw)
-                omega = delta_yaw / delta_time_ms
+            delta_yaw = (dist_right - dist_left) / WHEEL_DISTANCE_MM
+            yaw = bound_angle(yaw + delta_yaw)
+            omega = delta_yaw / delta_time_ms
 
-                self.fifo.append((current_time, x, y, yaw, omega))
+            self.fifo.appendleft((current_time, x, y, yaw, omega))
 
         self.last_time_ms = current_time
         self.last_count_left = encoder_left
