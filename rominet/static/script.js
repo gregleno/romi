@@ -13,10 +13,8 @@ function init() {
   $("#joystick").bind("mousedown",mousedown)
   $("#joystick").bind("mousemove",mousemove)
   $("#joystick").bind("mouseup",mouseup)
-  $('#container').UISlider.bind("mouseup",function (event) {
-      stop_motors = false
+  $('#container').bind("mouseup",function (event) {
       setMotors(0, 0)
-      $('.ui-slider').UISlider('value', 100)
   })
   var s = $('.ui-slider').UISlider({
       min: 0,
@@ -25,23 +23,16 @@ function init() {
       smooth: true,
       vertical: true,
   }).on('thumbmove', function (event, value) {
-      stop_motors = false
       x = Number((value - 100).toFixed(0));
       setMotors(x, x)
   }).on('end', function (event) {
-      stop_motors = false
       setMotors(0, 0)
-      $('.value').text(100);
   });
 }
 
 function poll() {
   try {
       $.ajax({url: "/rominet/api/status"}).done(update_status)
-      if(stop_motors && !block_set_motors) {
-        stop_motors = false
-        setMotors(0,0);
-      }
       setTimeout(poll, pollTime)
   } catch(err) {
     setTimeout(poll, 2000)
@@ -106,7 +97,6 @@ function mouseup(e) {
   {
     e.preventDefault()
     mouse_dragging = false
-    stop_motors = true
   }
   setMotors(0,0);
 }
@@ -144,20 +134,24 @@ function dragTo(x, y) {
   if(right_motor > max) right_motor = max
   if(right_motor < -max) right_motor = -max
 
-  stop_motors = false
   setMotors(left_motor, right_motor)
 }
 
 function touchend(e) {
   e.preventDefault()
-  stop_motors = true
+  setMotors(0, 0)
 }
 
 function setMotors(left, right) {
-  $("#joystick").html("Motors: " + left + " "+ right)
+    if (left == 0 && right == 0) {
+      stop_motors = true
+      $('.ui-slider').UISlider('value', 100)
+    }
 
   if(block_set_motors) return
   block_set_motors = true
+  stop_motors = false
+  $("#joystick").html("Motors: " + left + " "+ right)
   var data = {
       left: left,
       right: right,
@@ -173,6 +167,9 @@ function setMotors(left, right) {
 
 function setMotorsDone() {
   block_set_motors = false
+  if (stop_motors) {
+    setMotors(0, 0)
+  }
 }
 
 function setLeds() {
