@@ -62,6 +62,11 @@ def camera_feed(width=400):
                     mimetype='multipart/x-mixed-replace; boundary=frame')
 
 
+@app.route('/rominet/api/camera')
+def camera(width=400):
+    return robot.get_camera_frame()
+
+
 @app.route('/rominet/api/shutdown', methods=['GET'])
 def reboot():
     try:
