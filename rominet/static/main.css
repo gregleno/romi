@@ -15,14 +15,3 @@
   margin-left: auto;
   margin-right: auto;
 }
-
-.value.editing {
-    color: #aaa;
-}
-
-.ui-slider-control.horizontal {
-    width: 100%;
-}
-.ui-slider-control.vertical {
-    height: 200px;
-}

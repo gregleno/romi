@@ -13,21 +13,9 @@ function init() {
   $("#joystick").bind("mousedown",mousedown)
   $("#joystick").bind("mousemove",mousemove)
   $("#joystick").bind("mouseup",mouseup)
-  $('#container').bind("mouseup",function (event) {
+  $('#jqxWidget').bind("mouseup",function (event) {
       setMotors(0, 0)
   })
-  var s = $('.ui-slider').UISlider({
-      min: 0,
-      max: 200,
-      value: 100,
-      smooth: true,
-      vertical: true,
-  }).on('thumbmove', function (event, value) {
-      x = Number((value - 100).toFixed(0));
-      setMotors(x, x)
-  }).on('end', function (event) {
-      setMotors(0, 0)
-  });
 }
 
 function poll() {
@@ -145,7 +133,6 @@ function touchend(e) {
 function setMotors(left, right) {
     if (left == 0 && right == 0) {
       stop_motors = true
-      $('.ui-slider').UISlider('value', 100)
     }
 
   if(block_set_motors) return

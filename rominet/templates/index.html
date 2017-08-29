@@ -2,111 +2,80 @@
 <html lang='en'>
     <head>
         <meta charset='utf-8'>
+        <link rel="stylesheet" href="static/jqwidgets/styles/jqx.base.css" type="text/css" />
+        <link rel="stylesheet" href="static/jqwidgets/styles/jqx.dark.css" type="text/css" />
         <link rel="stylesheet" media="all" href="static/main.css">
         <script src="static/jquery-3.2.1.min.js"></script>
-        <script src="static/script.js?7"></script>
+        <script src="static/script.js"></script>
         <script type="text/javascript" src="static/jqwidgets/jqxcore.js"></script>
         <script type="text/javascript" src="static/jqwidgets/jqxbuttons.js"></script>
+        <script type="text/javascript" src="static/jqwidgets/jqxtabs.js"></script>
+        <script type="text/javascript" src="static/jqwidgets/jqxbuttons.js"></script>
+        <script type="text/javascript">
+            $(document).ready(function () {
+                $.jqx.theme = 'dark';
+                $("#resetOdometryButton").jqxButton({ width: 120, height: 40, template: "warning" });
+                $("#resetOdometryButton").on('click', function(){
+                    resetOdometry()
+                });
+                $('#jqxTabs').jqxTabs({ width: '100%',
+                                        height: '100%',
+                                        position: 'top',
+                                        selectionTracker: 'false',
+                                        animationType: 'fade'});
+            });
+        </script>
         <title>Rominet Control Panel</title>
     </head>
 
     <body onload="init();">
-        <script type="text/javascript">
-            $(document).ready(function () {
-                $("#myButton").jqxButton(
-               { width: '555px', height: '35px', theme: 'darkblue' }
-               );
-            });
-         </script>
-         <input type="button" value="Click Me" id='myButton' />
+        <div id='jqxWidget'>
+            <div id="jqxTabs">
+                <ul>
+                    <li>Drive</li>
+                    <li>Misc</li>
+                </ul>
+                <div>
+                    <div class="row">
+                        <td class="wide"><span id="positionX"></span> , <span id="positionY"></span></td>
+                        <td class="wide"><span id="speed"></span></td>
+                        <input type="button" value="Reset Odometry" id='resetOdometryButton' />
+                    </div>
+                    <div class="row">
+                        <td class="wide"><span id="battery"></span> mV</td>
+                        <td class="wide"><span id="speed"></span></td>
+                    </div>
+                    <div class="row" id="joystick">
+                    </div>
+                    <div class="row">
+                            <img src="{{ url_for('camera') }}">
+                    </div>
 
-        <div id="container">
-            <div class="row">
-                <div class="col-xs-4">
-                    <table class="table table-striped">
-                        <tr>
-                            <th>Buttons</th>
-                            <td class="center" id="button0"></td>
-                            <td class="center" id="button1"></td>
-                            <td class="center" id="button2"></td>
-                        </tr>
+                </div>
+                <div id="tab2">
+                    <div class="row">
+                        <table class="table table-striped">
 
-                        <tr><th>LEDs</th>
-                            <td class="center"><input type="checkbox" id="led_red" onchange="setLeds()"></td>
-                            <td class="center"><input type="checkbox" id="led_green" onchange="setLeds()"></td>
-                            <td class="center"><input type="checkbox" id="led_yellow" onchange="setLeds()"></td>
-                        </tr>
-                    </table>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-xs-3">
-                    <textarea class="form-control" rows="1" id="notes" maxlength="14" >l16ceg>c</textarea>
-                </div>
-                <div class="col-xs-1">
-                    <button class="btn btn-primary" type="submit" onclick="playNotes()">Play</button>
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="col-xs-3">
-                    <table class="table table-striped">
-                        <tr>
-                            <td>Battery</td>
-                            <td>Speed</td>
-                        </tr>
-
-                        <tr>
-                            <td class="wide"><span id="battery"></span> mV</td>
-                            <td class="wide"><span id="speed"></span></td>
-                        </tr>
-                    </table>
-                </div>
-                <div class="col-xs-1">
-                    <div class="compass">
-                		<div class="arrow" id=compassArrowYaw></div>
-                		<div class="disc" id=compassDiscYaw></div>
-                	</div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-xs-4">
-                    <table class="table table-striped">
-                        <tr>
-                            <td>Position</td>
-                            <td>Encoders</td>
-                            <td>max speed</td>
-                        </tr>
-
-                        <tr>
-                            <td class="wide"><span id="positionX"></span> , <span id="positionY"></span></td>
-                            <td class="wide"><span id="encoderLeft"></span> , <span id="encoderRight"></span></td>
-                            <td class="wide"><span id="maxSpeedLeft"></span> , <span id="maxSpeedRight"></span></td>
-                        </tr>
-                    </table>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-xs-3">
-                    <div id="joystick"></div>
-                </div>
-                <div class="col-xs-1">
-                    <div data-target="#slidervalue" class="ui-slider"></div>
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="col-xs-2">
-                    <img src="{{ url_for('camera') }}">
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="col-xs-2">
-                    <button type="button" class="btn btn-danger" onClick="shutdown()">Shutdown</button>
-                </div>
-                <div class="col-xs-2">
-                    <button type="button" class="btn btn-warning" onClick="resetOdometry()">Reset Odometry</button>
+                            <tr><th>LEDs</th>
+                                <td class="center"><input type="checkbox" id="led_red" onchange="setLeds()"></td>
+                                <td class="center"><input type="checkbox" id="led_green" onchange="setLeds()"></td>
+                                <td class="center"><input type="checkbox" id="led_yellow" onchange="setLeds()"></td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-3">
+                            <textarea class="form-control" rows="1" id="notes" maxlength="14" >l16ceg>c</textarea>
+                        </div>
+                        <div class="col-xs-1">
+                            <button class="btn btn-primary" type="submit" onclick="playNotes()">Play</button>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-2">
+                            <button type="button" class="btn btn-danger" onClick="shutdown()">Shutdown</button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

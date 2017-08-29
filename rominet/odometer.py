@@ -69,6 +69,7 @@ class Speedometer(object):
             self.max_speed_left = max(self.max_speed_left, abs(self.speed_left))
             self.max_speed_right = max(self.max_speed_right, abs(self.speed_right))
 
+
 class PositionMeter(object):
     def __init__(self):
         self.last_count_left = 0
