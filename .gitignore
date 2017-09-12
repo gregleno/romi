@@ -1,4 +1,5 @@
 *.pyc
+*.smbdelete*
 /dist/
 /*.egg-info
 /*.eggs

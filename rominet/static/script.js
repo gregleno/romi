@@ -23,7 +23,7 @@ function poll() {
       $.ajax({url: "/rominet/api/status"}).done(update_status)
       setTimeout(poll, pollTime)
   } catch(err) {
-    setTimeout(poll, 2000)
+    setTimeout(poll, 10000)
   }
 }
 
@@ -33,15 +33,15 @@ function update_status(json) {
           $("#button0").html(json["buttons"][0] ? '1' : '0')
           $("#button1").html(json["buttons"][1] ? '1' : '0')
           $("#button2").html(json["buttons"][2] ? '1' : '0')
-          $("#battery").html(json["battery"])
           $("#yaw").html(Number((json["yaw"]).toFixed(2)))
-          $("#speed").html(json["speed"])
+          $("#speedGauge").val(Number(json["speed"]))
           $("#positionX").html(Number((json["position"][0]).toFixed(2)))
           $("#maxSpeedLeft").html(json["max_speed"][0])
           $("#encoderLeft").html(json["encoders"][0])
           $("#positionY").html(Number((json["position"][1]).toFixed(2)))
           $("#maxSpeedRight").html(json["max_speed"][1])
           $("#encoderRight").html(json["encoders"][1])
+          $("#batteryGauge").val(Number(json["battery"]));
 
           var yawDeg = json["yaw"] * 180 / 3.14159;
           var elem = $("#compassArrowYaw");
@@ -53,7 +53,7 @@ function update_status(json) {
               to = to - 360;
           }
 
-           $({deg: from}).animate({deg: to}, {
+/*           $({deg: from}).animate({deg: to}, {
                duration: 600,
                step: function(now){
                    elem.css({
@@ -61,7 +61,7 @@ function update_status(json) {
                    });
                }
            });
-           yaw = yawDeg
+           yaw = yawDeg*/
       } else {
       }
   //} catch(err) {

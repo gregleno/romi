@@ -2,18 +2,23 @@
 <html lang='en'>
     <head>
         <meta charset='utf-8'>
-        <link rel="stylesheet" href="static/bootstrap-3.3.7/css/bootstrap.min.css">
+        <link rel="stylesheet" href="static/bootstrap-3.3.7/css/bootstrap.min.css" rel="stylesheet">
         <link rel="stylesheet" href="static/jqwidgets/styles/jqx.base.css" type="text/css" />
         <link rel="stylesheet" href="static/jqwidgets/styles/jqx.dark.css" type="text/css" />
         <link rel="stylesheet" media="all" href="static/main.css">
+        <link href="static/jqwidgets/styles/jqx.bootstrap.css" rel="stylesheet">
+
         <script src="static/jquery-3.2.1.min.js"></script>
-        <script src="static/bootstrap-3.3.7/js/bootstrap.min.js"
-                crossorigin="anonymous"></script>
         <script src="static/script.js"></script>
         <script type="text/javascript" src="static/jqwidgets/jqxcore.js"></script>
         <script type="text/javascript" src="static/jqwidgets/jqxbuttons.js"></script>
         <script type="text/javascript" src="static/jqwidgets/jqxtabs.js"></script>
         <script type="text/javascript" src="static/jqwidgets/jqxbuttons.js"></script>
+        <script type="text/javascript" src="static/jqwidgets/jqxdraw.js"></script>
+        <script type="text/javascript" src="static/jqwidgets/jqxgauge.js"></script>
+
+        <script src="static/bootstrap-3.3.7/js/bootstrap.min.js"
+                crossorigin="anonymous"></script>
         <script type="text/javascript">
             $(document).ready(function () {
                 $.jqx.theme = 'dark';
@@ -26,45 +31,110 @@
                                         position: 'top',
                                         selectionTracker: 'false',
                                         animationType: 'fade'});
+                $('#batteryGauge').jqxGauge({
+                         ranges: [{
+                             startValue: 0,
+                             endValue: 6500,
+                             style: {fill: '#FC6A6A',stroke: '#FC6A6A'},
+                             endWidth: 1,
+                             startWidth: 1
+                         }, {
+                             startValue: 6500,
+                             endValue: 7000,
+                             style: {fill: '#FCF06A', stroke: '#FCF06A'},
+                             endWidth: 1,
+                             startWidth: 1
+                         }, {
+                             startValue: 7000,
+                             endValue: 8000,
+                             style: {fill: '#0C9A9A', stroke: '#0C9A9A'},
+                             endWidth: 1,
+                             startWidth: 1
+                         }],
+                         ticksMinor: {interval: 500,size: '5%'},
+                         ticksMajor: {interval: 1000, size: '9%'},
+                         value: 0,
+                         min: 0,
+                         max: 8000,
+                         radius: 30,
+                         caption: { value: '7200', position: 'bottom', offset: [0, 0], visible: true },
+                         labels: { visible: false },
+                     });
+                     $('#batteryGauge').bind('valueChanged', function (e) {
+                         $('#batteryGauge').jqxGauge({
+                             caption: {value: e.args.value, position: 'bottom', offset: [0, 0]}
+                        	 });
+
+                    });
+                    $('#speedGauge').jqxGauge({
+                             ticksMinor: {interval: 500,size: '5%'},
+                             ticksMajor: {interval: 1000, size: '9%'},
+                             value: 0,
+                             min: 0,
+                             max: 4000,
+                             radius: 30,
+                             labels: { visible: false }
+                         });
             });
+
         </script>
         <title>Rominet Control Panel</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     </head>
 
     <body onload="init();">
-        <div id='jqxWidget'>
+        <div id="jqxWidget">
             <div id="jqxTabs">
                 <ul>
                     <li>Drive</li>
                     <li>Misc</li>
                 </ul>
-                <div>
+                <div class=container id="tab1">
                     <div class="row">
-                        <td class="wide"><span id="positionX"></span> , <span id="positionY"></span></td>
-                        <td class="wide"><span id="speed"></span></td>
-                        <input type="button" value="Reset Odometry" id='resetOdometryButton' />
+                        <div class="col-xs-3">
+                            <span id="positionX"></span>
+                        </div>
+                        <div class="col-xs-3">
+                            <span id="positionY"></span>
+                        </div>
+                        <div class="col-xs-3">
+                            <span id="speed"></span>
+                        </div>
+                        <div class="col-xs-3">
+                            <input type="button" value="Reset Odometry" id='resetOdometryButton' />
+                        </div>
                     </div>
                     <div class="row">
-                        <td class="wide"><span id="battery"></span> mV</td>
-                        <td class="wide"><span id="speed"></span></td>
-                    </div>
-                    <div class="row" id="joystick">
+                        <div class="col-xs-3">
+                            <div id="batteryGauge"></div>
+                        </div>
+                        <div class="col-xs-3">
+                            <span id="speedGauge"></span>
+                        </div>
                     </div>
                     <div class="row">
-                            <img src="{{ url_for('camera') }}">
+                        <div class="col-xs-3">
+                            <div id="joystick" ></div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-9">
+                            <img src="{{ url_for('camera') }}" class="img-responsive" alt="Responsive image">
+                        </div>
                     </div>
 
                 </div>
-                <div id="tab2">
+                <div class="container" id="tab2">
                     <div class="row">
-                        <table class="table table-striped">
-
-                            <tr><th>LEDs</th>
-                                <td class="center"><input type="checkbox" id="led_red" onchange="setLeds()"></td>
-                                <td class="center"><input type="checkbox" id="led_green" onchange="setLeds()"></td>
-                                <td class="center"><input type="checkbox" id="led_yellow" onchange="setLeds()"></td>
-                            </tr>
-                        </table>
+                        <div class="col-xs-6">
+                            <table class="table table-striped">
+                                <tr><th>LEDs</th>
+                                    <td class="center"><input type="checkbox" id="led_red" onchange="setLeds()"></td>
+                                    <td class="center"><input type="checkbox" id="led_green" onchange="setLeds()"></td>
+                                    <td class="center"><input type="checkbox" id="led_yellow" onchange="setLeds()"></td>
+                                </tr>
+                            </table>
+                        </div>
                     </div>
                     <div class="row">
                         <div class="col-xs-3">
