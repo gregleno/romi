@@ -9,7 +9,6 @@
         <link href="static/jqwidgets/styles/jqx.bootstrap.css" rel="stylesheet">
 
         <script src="static/jquery-3.2.1.min.js"></script>
-        <script src="static/script.js"></script>
         <script type="text/javascript" src="static/jqwidgets/jqxcore.js"></script>
         <script type="text/javascript" src="static/jqwidgets/jqxbuttons.js"></script>
         <script type="text/javascript" src="static/jqwidgets/jqxtabs.js"></script>
@@ -19,65 +18,7 @@
 
         <script src="static/bootstrap-3.3.7/js/bootstrap.min.js"
                 crossorigin="anonymous"></script>
-        <script type="text/javascript">
-            $(document).ready(function () {
-                $.jqx.theme = 'dark';
-                $("#resetOdometryButton").jqxButton({ width: 120, height: 40, template: "warning" });
-                $("#resetOdometryButton").on('click', function(){
-                    resetOdometry()
-                });
-                $('#jqxTabs').jqxTabs({ width: '100%',
-                                        height: '100%',
-                                        position: 'top',
-                                        selectionTracker: 'false',
-                                        animationType: 'fade'});
-                $('#batteryGauge').jqxGauge({
-                         ranges: [{
-                             startValue: 0,
-                             endValue: 6500,
-                             style: {fill: '#FC6A6A',stroke: '#FC6A6A'},
-                             endWidth: 1,
-                             startWidth: 1
-                         }, {
-                             startValue: 6500,
-                             endValue: 7000,
-                             style: {fill: '#FCF06A', stroke: '#FCF06A'},
-                             endWidth: 1,
-                             startWidth: 1
-                         }, {
-                             startValue: 7000,
-                             endValue: 8000,
-                             style: {fill: '#0C9A9A', stroke: '#0C9A9A'},
-                             endWidth: 1,
-                             startWidth: 1
-                         }],
-                         ticksMinor: {interval: 500,size: '5%'},
-                         ticksMajor: {interval: 1000, size: '9%'},
-                         value: 0,
-                         min: 0,
-                         max: 8000,
-                         radius: 30,
-                         caption: { value: '7200', position: 'bottom', offset: [0, 0], visible: true },
-                         labels: { visible: false },
-                     });
-                     $('#batteryGauge').bind('valueChanged', function (e) {
-                         $('#batteryGauge').jqxGauge({
-                             caption: {value: e.args.value, position: 'bottom', offset: [0, 0]}
-                        	 });
-
-                    });
-                    $('#speedGauge').jqxGauge({
-                             ticksMinor: {interval: 500,size: '5%'},
-                             ticksMajor: {interval: 1000, size: '9%'},
-                             value: 0,
-                             min: 0,
-                             max: 4000,
-                             radius: 30,
-                             labels: { visible: false }
-                         });
-            });
-
-        </script>
+        <script src="static/script.js?rndstr=<%= getRandomStr() %"></script>
         <title>Rominet Control Panel</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     </head>
@@ -98,9 +39,6 @@
                             <span id="positionY"></span>
                         </div>
                         <div class="col-xs-3">
-                            <span id="speed"></span>
-                        </div>
-                        <div class="col-xs-3">
                             <input type="button" value="Reset Odometry" id='resetOdometryButton' />
                         </div>
                     </div>
@@ -109,7 +47,7 @@
                             <div id="batteryGauge"></div>
                         </div>
                         <div class="col-xs-3">
-                            <span id="speedGauge"></span>
+                            <div id="speedGauge"></div>
                         </div>
                     </div>
                     <div class="row">
@@ -119,7 +57,7 @@
                     </div>
                     <div class="row">
                         <div class="col-xs-9">
-                            <img src="{{ url_for('camera') }}" class="img-responsive" alt="Responsive image">
+                            <img src="/rominet/api/camera?123" class="img-responsive" alt="Responsive image" id="web_cam">
                         </div>
                     </div>
 

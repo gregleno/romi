@@ -2,7 +2,7 @@
 
 import os
 from flask import Flask, jsonify, make_response, request, abort, render_template, redirect
-from rominet.robot import Robot
+# from rominet.robot import Robot
 
 
 app = Flask("rominet")
@@ -94,7 +94,7 @@ def get_status():
     try:
         data = {'battery': robot.get_battery(),
                 'connected': True,
-                'position': robot.get_position_XY(),
+                'position': robot.get_position_xy(),
                 'encoders': robot.get_encoders(),
                 'speed': robot.get_speed(),
                 'max_speed': robot.get_max_speed_left_right(),
@@ -112,7 +112,3 @@ def run_web_server(rob, debug=False):
     # log = logging.getLogger('werkzeug')
     # log.setLevel(logging.ERROR)
     app.run(debug=debug, host="0.0.0.0", threaded=True)
-
-
-if __name__ == '__main__':
-    run_web_server(Robot())

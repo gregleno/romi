@@ -59,7 +59,7 @@ class FakeRobot(object):
         pass
 
     def get_battery(self):
-        return 8000 - (self.delta_time_ms() / 230 % 1000)
+        return 8000 - (self.delta_time_ms() / 10 % 2000)
 
     def is_romi_board_connected(self):
         return True
