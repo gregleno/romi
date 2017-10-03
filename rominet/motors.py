@@ -29,8 +29,8 @@ class Motors(object):
         left_speed_cmd = self.pid_left.get_output(self.set_point_left, speed_left, current_time)
         right_speed_cmd = self.pid_right.get_output(self.set_point_right, speed_right, current_time)
 
-        left_cmd = (int)(left_speed_cmd * self.max_cmd / self.max_speed)
-        right_cmd = (int)(right_speed_cmd * self.max_cmd / self.max_speed)
+        left_cmd = int(left_speed_cmd * self.max_cmd / self.max_speed)
+        right_cmd = int(right_speed_cmd * self.max_cmd / self.max_speed)
         if self.set_point_left == 0 and self.set_point_right == 0:
             if abs(left_cmd) < 20 and abs(right_cmd) < 20:
                 left_cmd = 0

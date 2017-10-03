@@ -209,7 +209,7 @@ class WiiRemote(object):
             yn = float(stick[1] - self.nun_stick_center_y) / (
                        self.nun_stick_center_y - self.nun_stick_min_y)
 
-        return (xn, yn)
+        return xn, yn
 
     def set_led(self, led):
         self.wm.led = led

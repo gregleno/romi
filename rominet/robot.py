@@ -2,10 +2,7 @@ import logging
 import time
 from rominet.a_star import AStar
 from rominet.motors import Motors
-try:
-    from rominet.camera import Camera
-except ImportError:
-    pass
+from rominet.camera import Camera
 from rominet.odometer import Odometer
 from rominet.encoders import Encoders
 
@@ -54,8 +51,8 @@ class Robot(object):
             self.a_star.leds(*leds)
             time.sleep(0.4)
 
-    def get_position_XY(self):
-        return self.odometer.get_position_XY()
+    def get_position_xy(self):
+        return self.odometer.get_position_xy()
 
     def get_encoders(self):
         return self.encoders.get_encoder_values()

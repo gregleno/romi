@@ -2,11 +2,10 @@
 
 import logging
 import time
-from rominet.robot import Robot
 from rominet.webserver import run_web_server
 
 
-class FakeRobot(Robot):
+class FakeRobot(object):
 
     def __init__(self):
         self.position = (0, 0)
@@ -20,7 +19,7 @@ class FakeRobot(Robot):
         pass
 
     def read_buttons(self):
-        return (0, 1, 0)
+        return 0, 1, 0
 
     def delta_time_ms(self):
         return int(round(time.time() * 1000)) - self.start_time
@@ -28,12 +27,12 @@ class FakeRobot(Robot):
     def delta_time_s(self):
         return int(round(time.time())) - self.start_time / 1000
 
-    def get_position_XY(self):
+    def get_position_xy(self):
         self.position = ((self.delta_time_s() / 7.) % 124, (self.delta_time_s() / 13.) % 223)
         return self.position
 
     def get_encoders(self):
-        return (self.delta_time_ms() % 123224, self.delta_time_ms() / 2 % 222283)
+        return self.delta_time_ms() % 123224, self.delta_time_ms() / 2 % 222283
 
     def get_yaw(self):
         return (self.delta_time_ms() / 4000.) % 6.28
@@ -48,7 +47,7 @@ class FakeRobot(Robot):
         return self.delta_time_ms() % 4000
 
     def get_max_speed_left_right(self):
-        return (3456, 2637)
+        return 3456, 2637
 
     def set_leds(self, red, yellow, green):
         pass

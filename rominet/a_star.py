@@ -2,10 +2,7 @@
 import struct
 import time
 from multiprocessing import Lock
-try:
-    import smbus
-except:
-    pass
+import smbus
 
 
 bus_lock = Lock()

@@ -5,7 +5,7 @@ import os
 from threading import Thread
 from time import sleep
 from rominet.robot import Robot
-from rominet.robot_wii_controler import RobotWiiControler
+from rominet.robot_wii_controler import RobotWiiController
 from rominet.webserver import run_web_server
 
 
@@ -20,7 +20,7 @@ def main():
 
 
 def control_loop(rob):
-    robot_wii_controler = None
+    robot_wii_controller = None
     robot = rob
 
     try:
@@ -54,35 +54,32 @@ def control_loop(rob):
                         cont = False
                         break
                     if buttonA:
-                        if robot_wii_controler is None:
+                        if robot_wii_controller is None:
                             log.info("Creating RobotWiiControler")
-                            robot_wii_controler = RobotWiiControler(robot)
+                            robot_wii_controller = RobotWiiController(robot)
                         else:
                             log.info("Releasing RobotWiiControler")
-                            robot_wii_controler.release()
-                            robot_wii_controler = None
+                            robot_wii_controller.release()
+                            robot_wii_controller = None
 
                     sleep(1)
-            except IOError as e:
+            except IOError:
                 if not connection_error_printed:
                     log.info("Cannot connect to Romi board")
                     connection_error_printed = True
                 sleep(10)
 
-    except KeyboardInterrupt as e:
+    except KeyboardInterrupt:
         logging.info("Stopped by KeyboardInterrupt")
 
     except Exception as e:
         logging.error("Error happened")
         logging.error(e)
 
-    except:
-        logging.error("Something really bad happened")
-
     finally:
-        if robot_wii_controler is not None:
-            robot_wii_controler.release()
-            logging.info("Releasing robot wii controler")
+        if robot_wii_controller is not None:
+            robot_wii_controller.release()
+            logging.info("Releasing robot wii controller")
 
         logging.info("Stopping robot")
         robot.stop()

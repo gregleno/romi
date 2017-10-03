@@ -112,7 +112,7 @@ class PositionMeter(object):
 
     def get_xy(self):
         (current_time, x, y, yaw, omega) = self.fifo[0]
-        return (x, y)
+        return x, y
 
     def get_yaw(self):
         (current_time, x, y, yaw, omega) = self.fifo[0]
@@ -152,7 +152,7 @@ class Odometer(object):
         self.speedometer.reset()
         self.pos.reset()
 
-    def get_position_XY(self):
+    def get_position_xy(self):
         return self.pos.get_xy()
 
     def get_distance(self):

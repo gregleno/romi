@@ -3,12 +3,11 @@
 import logging
 import math
 import cwiid
-import time
 from wiiremote import WiiRemote
 from robot import Robot
 
 
-class RobotWiiControler(object):
+class RobotWiiController(object):
 
     def __init__(self, robot):
         self.log = logging.getLogger('romi')
@@ -53,7 +52,6 @@ class RobotWiiControler(object):
     def _move_robot_with_stick(self, stick):
         x = stick[0]
         y = stick[1]
-        left = right = 0
         speed = math.sqrt(y * y + x * x)
         left = speed
         right = speed
@@ -109,7 +107,7 @@ def main():
     log = logging.getLogger('romi')
     log.setLevel(logging.INFO)
     log.addHandler(logging.StreamHandler())
-    RobotWiiControler(Robot())
+    RobotWiiController(Robot())
 
 
 if __name__ == "__main__":

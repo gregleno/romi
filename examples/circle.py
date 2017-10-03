@@ -56,7 +56,7 @@ try:
         phi = rpb202.odometer.get_phi()
         print round(degrees(phi), 1)
 
-    print rpb202.odometer.get_position_XY()
+    print rpb202.odometer.get_position_xy()
 
 except KeyboardInterrupt:
     print "Keyboard Interrupt"

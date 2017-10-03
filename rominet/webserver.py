@@ -1,8 +1,7 @@
 #!/usr/bin/env python
 
-import logging
 import os
-from flask import Flask, jsonify, make_response, request, abort, render_template, redirect, Response
+from flask import Flask, jsonify, make_response, request, abort, render_template, redirect
 from rominet.robot import Robot
 
 
@@ -48,22 +47,8 @@ def play_notes():
         return jsonify({'connected': False})
 
 
-def gen(robot):
-    """Video streaming generator function."""
-    while True:
-        frame = robot.get_camera_frame()
-        yield (b'--frame\r\n'
-               b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
-
-
-@app.route('/rominet/api/camera_feed')
-def camera_feed(width=400):
-    return Response(gen(robot),
-                    mimetype='multipart/x-mixed-replace; boundary=frame')
-
-
 @app.route('/rominet/api/camera')
-def camera(width=400):
+def camera():
     return robot.get_camera_frame()
 
 

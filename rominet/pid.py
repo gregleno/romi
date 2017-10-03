@@ -27,8 +27,8 @@ class PID(object):
         self.previous_time = current_time
 
         value = (self.Kp * self.error +
-                self.Ki * self.error_integration +
-                self.Kd * self.error_derivative)
+                 self.Ki * self.error_integration +
+                 self.Kd * self.error_derivative)
         if value > self.max_abs_value:
             value = self.max_abs_value
         if value < -self.max_abs_value:

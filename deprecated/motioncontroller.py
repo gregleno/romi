@@ -21,14 +21,14 @@ class MotionController:
     # Serial; Method will execute until the target distance is reached
     def forwardDist(self, speed, distTarget, stop=True, decel=False):
         phi0 = self.odometer.get_phi()
-        x0, y0 = self.odometer.get_position_XY()
+        x0, y0 = self.odometer.get_position_xy()
         dist = 0
         loopTimer = Timer()
         if decel:
             while dist < distTarget - speed * 3 * self.time_step:
                 self.forwardAngle(speed, phi0)
                 loopTimer.sleepToElapsed(self.time_step)
-                x1, y1 = self.odometer.get_position_XY()
+                x1, y1 = self.odometer.get_position_xy()
                 dist = sqrt((x1 - x0)**2 + (y1 - y0)**2)
                 if distTarget - dist < 50 and speed > 75:
                     speed = speed / 1.3
@@ -36,7 +36,7 @@ class MotionController:
             while dist < distTarget:
                 self.forwardAngle(speed, phi0)
                 loopTimer.sleepToElapsed(self.time_step)
-                x1, y1 = self.odometer.get_position_XY()
+                x1, y1 = self.odometer.get_position_xy()
                 dist = sqrt((x1 - x0)**2 + (y1 - y0)**2)
         if stop:
             self.stop()
