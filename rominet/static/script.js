@@ -3,6 +3,7 @@ block_set_motors = false;
 mouse_dragging = false;
 yaw = 0;
 pollTime = 1000;
+refreshToggled = true;
 
 $(document).ready(function () {
     $.jqx.theme = "dark";
@@ -47,6 +48,18 @@ $(document).ready(function () {
              labels: { visible: false },
              caption: { value: '0', position: 'bottom', offset: [0, 0], visible: true },
      });
+
+    $("#jqxRefreshButton").jqxToggleButton({ width: '200', toggled: true});
+    $("#jqxRefreshButton").on('click', function () {
+        refreshToggled = $("#jqxRefreshButton").jqxToggleButton('toggled');
+        if (refreshToggled) {
+            $("#jqxRefreshButton").value = 'Refresh On';
+            poll()
+        }
+        else
+            $("#jqxRefreshButton").value = 'Refresh Off';
+    });
+
      poll()
 });
 
@@ -64,11 +77,9 @@ function init() {
 }
 
 function poll() {
-  try {
-      $.ajax({url: "/rominet/api/status"}).done(update_status);
+  $.ajax({url: "/rominet/api/status"}).done(update_status);
+  if(refreshToggled) {
       setTimeout(poll, pollTime);
-  } catch(err) {
-    setTimeout(poll, 10000);
   }
 }
 
