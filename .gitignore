@@ -5,3 +5,7 @@
 /*.eggs
 /build/
 **/*.DS_Store
+.idea/**
+/rominet/static/._images
+/rominet/static/._.DS_Store
+/.idea/

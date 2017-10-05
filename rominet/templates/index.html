@@ -12,22 +12,28 @@
         <script type="text/javascript" src="static/jqwidgets/jqxcore.js"></script>
         <script type="text/javascript" src="static/jqwidgets/jqxbuttons.js"></script>
         <script type="text/javascript" src="static/jqwidgets/jqxtabs.js"></script>
-        <script type="text/javascript" src="static/jqwidgets/jqxbuttons.js"></script>
         <script type="text/javascript" src="static/jqwidgets/jqxdraw.js"></script>
         <script type="text/javascript" src="static/jqwidgets/jqxgauge.js"></script>
+        <script type="text/javascript" src="static/jqwidgets/jqxbuttongroup.js"></script>
+        <script type="text/javascript" src="static/jqwidgets/jqxsortable.js"></script>
+        <script type="text/javascript" src="static/jqwidgets/jqxkanban.js"></script>
+        <script type="text/javascript" src="static/jqwidgets/jqxdata.js"></script>
 
         <script src="static/bootstrap-3.3.7/js/bootstrap.min.js"
                 crossorigin="anonymous"></script>
         <script src="static/script.js?rndstr=<%= getRandomStr() %"></script>
+        <script src="static/joystick.js?rndstr=<%= getRandomStr() %"></script>
+        <script src="static/programmer.js?rndstr=<%= getRandomStr() %"></script>
         <title>Rominet Control Panel</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     </head>
 
-    <body onload="init();">
+    <body>
         <div id="jqxWidget">
             <div id="jqxTabs">
                 <ul>
                     <li>Drive</li>
+                    <li>Jeu</li>
                     <li>Misc</li>
                 </ul>
                 <div class=container id="tab1">
@@ -37,6 +43,8 @@
                         </div>
                         <div class="col-xs-2">
                             <span id="positionY"></span>
+                        </div>
+                        <div class="col-xs-2">
                         </div>
                         <div class="col-xs-3">
                             <input type="button" value="Reset Odom" id='resetOdometryButton' />
@@ -66,6 +74,29 @@
 
                 </div>
                 <div class="container" id="tab2">
+                    <div class="row">
+                        <div id='buttonGroup' class="col-xs-4">
+                            <button id="Move_Forward">
+                                Left</button>
+                            <button id="Move_Backward">
+                                Center</button>
+                            <button id="Turn_Left">
+                                Right</button>
+                            <button id="Turn_Right">
+                                Right</button>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <div id="kanban1"></div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-2">
+                        </div>
+                    </div>
+                </div>
+                <div class="container" id="tab3">
                     <div class="row">
                         <div class="col-xs-6">
                             <table class="table table-striped">
