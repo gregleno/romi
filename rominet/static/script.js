@@ -1,9 +1,6 @@
-stop_motors = true;
-block_set_motors = false;
-mouse_dragging = false;
-yaw = 0;
-pollTime = 1000;
-refreshTabVisible = true
+"use strict";
+var pollTime = 1000;
+var refreshTabVisible = true
 
 $(document).ready(function () {
     $.jqx.theme = "dark";
@@ -82,7 +79,7 @@ function toggleRefreshLabel(){
 function poll() {
   if($("#jqxRefreshButton").jqxToggleButton('toggled') && refreshTabVisible) {
       $.ajax({url: "/rominet/api/status"}).done(update_status);
-      d = new Date();
+      var d = new Date();
       $("#web_cam").attr("src", "/rominet/api/camera?" + d.getTime());
   }
 }
@@ -94,14 +91,14 @@ function update_status(json) {
         $("#button2").html(json["buttons"][2] ? '1' : '0');
         $("#yaw").html(Number((json["yaw"]).toFixed(2)));
 
-        volts = Number(json["battery"]) / 1000.;
+        var volts = Number(json["battery"]) / 1000.;
         $("#batteryGauge").jqxGauge({
             caption: { value: volts, position: 'bottom', offset: [0, 0], visible: true },
         });
 
         $('#batteryGauge').val(volts);
 
-        speed = Number(json["speed"])
+        var speed = Number(json["speed"])
         $("#speedGauge").jqxGauge({
             caption: { value: speed, position: 'bottom', offset: [0, 0], visible: true },
         });

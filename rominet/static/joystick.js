@@ -1,3 +1,7 @@
+var stop_motors = true;
+var block_set_motors = false;
+var mouse_dragging = false;
+
 function joystick_init() {
   $("#joystick").bind("touchstart", touchmove);
   $("#joystick").bind("touchmove", touchmove);

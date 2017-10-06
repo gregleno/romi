@@ -1,3 +1,4 @@
+"use strict";
 function programmer_init(){
     $("#Move_Forward").jqxButton({ width: 50, height: 50, imgWidth: 40, imgHeight: 40,
                                     imgSrc: "static/images/arrow-orange-up-300px.png" });
