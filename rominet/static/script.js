@@ -3,6 +3,7 @@ block_set_motors = false;
 mouse_dragging = false;
 yaw = 0;
 pollTime = 1000;
+refreshTabVisible = true
 
 $(document).ready(function () {
     $.jqx.theme = "dark";
@@ -12,6 +13,15 @@ $(document).ready(function () {
                             selectionTracker: 'false',
                             scrollable: 'false',
                             animationType: 'fade'});
+
+     $('#jqxTabs').on('selected', function (event)
+     {
+         var selectedTab = event.args.item;
+         refreshTabVisible = selectedTab == 0;
+         if (refreshTabVisible) {
+             poll();
+         }
+     });
 
     $("#resetOdometryButton").jqxButton();
     $("#resetOdometryButton").on('click', function(){
@@ -70,7 +80,7 @@ function toggleRefreshLabel(){
 }
 
 function poll() {
-  if($("#jqxRefreshButton").jqxToggleButton('toggled')) {
+  if($("#jqxRefreshButton").jqxToggleButton('toggled') && refreshTabVisible) {
       $.ajax({url: "/rominet/api/status"}).done(update_status);
       d = new Date();
       $("#web_cam").attr("src", "/rominet/api/camera?" + d.getTime());
