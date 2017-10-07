@@ -14,7 +14,7 @@ class Motors(object):
         self.set_point_right = 0
         self.last_send_left = -1000
         self.last_send_right = -1000
-        self.odometer.set_speed_measurement_callback(self._speed_measurement_callback)
+        self.odometer.set_odom_measurement_callback(self._odom_measurement_callback)
 
     def set_speed_target(self, left, right):
         if left != 0 and right != 0:
@@ -25,7 +25,7 @@ class Motors(object):
     def stop(self):
         self._send_command_to_motors(0, 0)
 
-    def _speed_measurement_callback(self, speed_left, speed_right, current_time):
+    def _odom_measurement_callback(self, speed_left, speed_right, x, y, yaw, omega, current_time):
         left_speed_cmd = self.pid_left.get_output(self.set_point_left, speed_left, current_time)
         right_speed_cmd = self.pid_right.get_output(self.set_point_right, speed_right, current_time)
 

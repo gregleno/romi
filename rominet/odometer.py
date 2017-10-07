@@ -21,7 +21,7 @@ DISTANCE_PER_TICK_MM = .152505
 
 
 # Function relative_angle(angleRef, angle) returns the shortest relative
-# angle from a reference angle "angleRef" to an angle "angle". The retuned
+# angle from a reference angle "angleRef" to an angle "angle". The returned
 # relative angle is bound within -Pi < angle < Pi
 def relative_angle(angle_ref, angle):
     angle_ref = bound_angle(angle_ref)
@@ -122,6 +122,9 @@ class PositionMeter(object):
         (current_time, x, y, yaw, omega) = self.fifo[0]
         return omega
 
+    def get_pos(self):
+        return self.fifo[0]
+
 
 class Odometer(object):
 
@@ -132,7 +135,7 @@ class Odometer(object):
         self.thread = None
         self.tracking = Event()
         self.tracking.clear()
-        self.speed_measurement_callback = None
+        self.odom_measurement_callback = None
         self.freq = 100
 
     def _update(self):
@@ -140,13 +143,15 @@ class Odometer(object):
         time_ms = current_time_ms()
         self.pos.update(count_left, count_right, time_ms)
         self.speedometer.update(count_left, count_right, time_ms)
-        if self.speed_measurement_callback is not None:
-            self.speed_measurement_callback(self.speedometer.speed_left,
-                                            self.speedometer.speed_right,
-                                            time_ms)
+        if self.odom_measurement_callback is not None:
+            current_time, x, y, yaw, omega = self.pos.get_pos()
+            self.odom_measurement_callback(self.speedometer.speed_left,
+                                           self.speedometer.speed_right,
+                                           x, y, yaw, omega,
+                                           time_ms)
 
-    def set_speed_measurement_callback(self, cb):
-        self.speed_measurement_callback = cb
+    def set_odom_measurement_callback(self, cb):
+        self.odom_measurement_callback = cb
 
     def reset_odometry(self):
         self.speedometer.reset()
