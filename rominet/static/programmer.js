@@ -1,4 +1,5 @@
 "use strict";
+
 function programmer_init(){
     $("#Move_Forward").jqxButton({ width: 50, height: 50, imgWidth: 40, imgHeight: 40,
                                     imgSrc: "static/images/arrow-orange-up-300px.png" });
@@ -8,21 +9,24 @@ function programmer_init(){
                                 imgSrc: "static/images/arrow-go-left-300px.png" });
     $("#Turn_Right").jqxButton({ width: 50, height: 50, imgWidth: 40, imgHeight: 40,
                                  imgSrc: "static/images/arrow-go-right-300px.png" });
+    $("#Play_Note").jqxButton({ width: 50, height: 50, imgWidth: 40, imgHeight: 40,
+                                 imgSrc: "static/images/double-note-300px.png" });
+    $("#Erase_Program").jqxButton({ width: 50, height: 50, imgWidth: 40, imgHeight: 40,
+                                 imgSrc: "static/images/Delete-Button-300px.png" });
+    $("#Play_Program").jqxButton({ width: 50, height: 50, imgWidth: 40, imgHeight: 40,
+                                 imgSrc: "static/images/round-green-play-button-on-300px.png" });
+    $("#Stop_Program").jqxButton({ width: 50, height: 50, imgWidth: 40, imgHeight: 40,
+                                 imgSrc: "static/images/Stop-Sign-300px.png" });
 
     var fields = [
               { name: "resourceId", type: "number" },
-              { name: "status", map: "state", type: "string" },
-              { name: "tags", type: "string" },
-              { name: "text", map: "label", type: "string" }
-
+              { name: "status", map: "state", type: "string"},
+              { name: "id", type: "string" },
     ];
     var source =
      {
          localData: [
-                  { state: "new", resourceId: 3, tags: " ", label: "r " },
-                  { state: "new", resourceId: 1, tags: " ", label: "r " },
-                  { state: "new", resourceId: 3, tags: " ", label: "r " },
-                  { state: "new", resourceId: 0, tags: " ", label: " " },
+                  { state: "new", resourceId: "up", id : 0},
          ],
          dataType: "array",
          dataFields: fields
@@ -32,10 +36,11 @@ function programmer_init(){
         var resourcesSource =
         {
             localData: [
-                  { id: 0, name: "Move Forward", image: "static/images/arrow-orange-up-300px.png"},
-                  { id: 1, name: "Move Backward", image: "static/images/arrow-orange-down-300px.png" },
-                  { id: 2, name: "Turn Left", image: "static/images/arrow-go-left-300px.png" },
-                  { id: 3, name: "Turn Right", image: "static/images/arrow-go-right-300px.png" },
+                  { id: "up", name: "Move Forward", image: "static/images/arrow-orange-up-300px.png"},
+                  { id: "down", name: "Move Backward", image: "static/images/arrow-orange-down-300px.png" },
+                  { id: "left", name: "Turn Left", image: "static/images/arrow-go-left-300px.png" },
+                  { id: "right", name: "Turn Right", image: "static/images/arrow-go-right-300px.png" },
+                  { id: "note", name: "Play Note", image: "static/images/double-note-300px.png" },
             ],
             dataType: "array",
             dataFields: [
@@ -48,28 +53,45 @@ function programmer_init(){
         return resourcesDataAdapter;
     }
 
-     var templateContent = { status: "new", text: "", content: "", tags: "", color: "green", resourceId: 0, className: ""}
-     //$('#kanban1').jqxKanban({ templateContent: templateContent });
      $('#kanban1').jqxKanban({
-        template: "<div class='jqx-kanban-item' id=''>"
-                             + "<div class='jqx-kanban-item-color-status'></div>"
-                             + "<div style='display: none;' class='jqx-kanban-item-avatar'></div>"
-                             + "<div class='jqx-icon jqx-icon-close-white jqx-kanban-item-template-content jqx-kanban-template-icon'></div>"
-                             + "<div class='jqx-kanban-item-text'></div>"
-                             + "<div style='display: none;' class='jqx-kanban-item-footer'></div>"
-                     + "</div>",
-        width: '50%',
+        template: "<div class='jqx-kanban-item' id='' >"
+                          + "<div class='jqx-kanban-item-avatar'></div>"
+                          + "<div class='jqx-icon jqx-icon-close-white jqx-kanban-item-template-content jqx-kanban-template-icon'></div>"
+                          + "</div>",
+        width: '100%',
         height: '600',
         resources: resourcesAdapterFunc(),
         source: dataAdapter,
-        connectWith: "#kanban2, #kanban3",
         columns: [
-            { text: "Backlog", dataField: "new",  maxItems: 10 }
-        ],
-        columnRenderer: function (element, collapsedElement, column) {
-            var columnItems = $("#kanban1").jqxKanban('getColumnItems', column.dataField).length;
-            element.find(".jqx-kanban-column-header-status").html(" (" + columnItems + "/" + column.maxItems + ")");
-            collapsedElement.find(".jqx-kanban-column-header-status").html(" (" + columnItems + "/" + column.maxItems + ")");
-        }
+            { text: "Program", dataField: "new",  maxItems: 10 }
+        ]
     });
+    $('#kanban1').on("itemAttrClicked", function (event) {
+                    var args = event.args;
+                    if (args.attribute == "template" && args.item) {
+                        $('#kanban1').jqxKanban('removeItem', args.item.id);
+                    }
+                });
+    $("#Move_Forward").click(function () {
+                    $('#kanban1').jqxKanban('addItem', { status: "new", resourceId: "up"});
+                });
+    $("#Move_Backward").click(function () {
+                    $('#kanban1').jqxKanban('addItem', { status: "new", resourceId: "down"});
+                });
+    $("#Turn_Left").click(function () {
+                    $('#kanban1').jqxKanban('addItem', { status: "new", resourceId: "left"});
+                });
+    $("#Turn_Right").click(function () {
+                    $('#kanban1').jqxKanban('addItem', { status: "new", resourceId: "right"});
+                });
+    $("#Play_Note").click(function () {
+                    $('#kanban1').jqxKanban('addItem', { status: "new", resourceId: "note"});
+                });
+    $("#Erase_Program").click(function () {
+                    var items = $('#kanban1').jqxKanban('getItems');
+                    items.forEach(function(entry) {
+                        if(entry)
+                            $('#kanban1').jqxKanban('removeItem', entry.id);
+                      });
+                });
 }

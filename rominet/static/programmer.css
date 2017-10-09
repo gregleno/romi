@@ -1,0 +1,24 @@
+.jqx-kanban-item {
+    padding-top: 0px;
+    height: 60px;
+    width: 70px;
+    border-width: 1px;
+    border-style: solid;
+    border-color: inherit;
+}
+.jqx-kanban-item-avatar {
+    top: 9px;
+    background:none;
+    left: 5px;
+    height: 50px;
+    width: 50px;
+}
+.jqx-kanban-item-avatar-image{
+    height: 40px;
+    width: 40px;
+}
+.jqx-kanban-template-icon {
+    position: absolute;
+    right: 3px;
+    top:12px;
+}
