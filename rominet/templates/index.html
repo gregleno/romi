@@ -22,9 +22,9 @@
 
         <script src="static/bootstrap-3.3.7/js/bootstrap.min.js"
                 crossorigin="anonymous"></script>
-        <script src="static/script.js?rndstr=<%= getRandomStr() %"></script>
-        <script src="static/joystick.js?rndstr=<%= getRandomStr() %"></script>
-        <script src="static/programmer.js?rndstr=<%= getRandomStr() %"></script>
+        <script src="static/script.js?version=1"></script>
+        <script src="static/joystick.js?version=1"></script>
+        <script src="static/programmer.js?version=1"></script>
         <title>Rominet Control Panel</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     </head>
@@ -76,19 +76,34 @@
                 </div>
                 <div class="container" id="tab2">
                     <div class="row">
-                        <div class="col-xs-2"><button id="Move_Forward"> </button></div>
-                        <div class="col-xs-2"><button id="Move_Backward"></button></div>
-                        <div class="col-xs-2"><button id="Turn_Left"></button></div>
-                        <div class="col-xs-2"><button id="Turn_Right"></button></div>
-                        <div class="col-xs-2"><button id="Play_Note"></button></div>
-                        <div class="col-xs-2"><button id="Erase_Program"></button></div>
-                        <div class="col-xs-2"><button id="Play_Program"></button></div>
-                        <div class="col-xs-2"><button id="Stop_Program"></button></div>
-                    </div>
-                    <div class="row">
-                        <div class="col-xs-4">
+                        <div class="col-xs-6">
+                            <table>
+                                <tr>
+                                    <td></td>
+                                    <td><button id="Move_Forward"> </button></td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td><button id="Turn_Left"></button></td>
+                                    <td><button id="Play_Note"></button></td>
+                                    <td><button id="Turn_Right"></button></td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td><button id="Move_Backward"></button></td>
+                                </tr>
+                                <tr>
+                                    <td><button id="Erase_Program"></button></td>
+                                    <td><button id="Play_Program"></button></td>
+                                    <td><button id="Stop_Program"></button></td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="col-xs-6">
                             <div id="kanban1"></div>
                         </div>
+                    </div>
+                    <div class="row">
                     </div>
                     <div class="row">
                         <div class="col-xs-2">

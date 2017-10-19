@@ -56,22 +56,15 @@ function programmer_init(){
      $('#kanban1').jqxKanban({
         template: "<div class='jqx-kanban-item' id='' >"
                           + "<div class='jqx-kanban-item-avatar'></div>"
-                          + "<div class='jqx-icon jqx-icon-close-white jqx-kanban-item-template-content jqx-kanban-template-icon'></div>"
                           + "</div>",
         width: '100%',
         height: '600',
         resources: resourcesAdapterFunc(),
         source: dataAdapter,
         columns: [
-            { text: "Program", dataField: "new",  maxItems: 10 }
+            { text: "Program", dataField: "new",  maxItems: 7 }
         ]
     });
-    $('#kanban1').on("itemAttrClicked", function (event) {
-                    var args = event.args;
-                    if (args.attribute == "template" && args.item) {
-                        $('#kanban1').jqxKanban('removeItem', args.item.id);
-                    }
-                });
     $("#Move_Forward").click(function () {
                     $('#kanban1').jqxKanban('addItem', { status: "new", resourceId: "up"});
                 });
