@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 
 import os
+import logging
+
 from flask import Flask, jsonify, make_response, request, abort, render_template, redirect
 # from rominet.robot import Robot
 
@@ -109,6 +111,6 @@ def get_status():
 def run_web_server(rob, debug=False):
     global robot
     robot = rob
-    # log = logging.getLogger('werkzeug')
-    # log.setLevel(logging.ERROR)
+    log = logging.getLogger('werkzeug')
+    log.setLevel(logging.ERROR)
     app.run(debug=debug, host="0.0.0.0", threaded=True)

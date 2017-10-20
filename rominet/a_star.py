@@ -1,6 +1,7 @@
 # Copyright Pololu Corporation.  For more information, see https://www.pololu.com/
 import struct
 import time
+import logging
 from multiprocessing import Lock
 import smbus
 
@@ -25,17 +26,28 @@ class AStar(object):
         # for the worst-case situation in our example code.
         byte_list = []
         with bus_lock:
-            self.bus.write_byte(20, address)
-            time.sleep(0.0001)
-            for n in range(0, size):
-                byte_list.append(self.bus.read_byte(20))
+            try:
+                self.bus.write_byte(20, address)
+                time.sleep(0.0001)
+                for n in range(0, size):
+                    byte_list.append(self.bus.read_byte(20))
+            except IOError:
+                logging.exception("IOError in read_unpack")
+                for n in range(0, size):
+                    byte_list.append(0)
+                time.sleep(0.0001)
+
         return struct.unpack(format, bytes(bytearray(byte_list)))
 
     def write_pack(self, address, format, *data):
         data_array = map(ord, list(struct.pack(format, *data)))
         with bus_lock:
-            self.bus.write_i2c_block_data(20, address, data_array)
-            time.sleep(0.0001)
+            try:
+                self.bus.write_i2c_block_data(20, address, data_array)
+            except IOError:
+                logging.exception("IOError in write_pack")
+            finally:
+                time.sleep(0.0001)
 
     def leds(self, red, yellow, green):
         self.write_pack(0, 'BBB', red, yellow, green)

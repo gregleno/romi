@@ -26,7 +26,7 @@ class Camera(object):
         with PiCamera() as camera:
             camera.resolution = (320, 240)
             camera.rotation = 180
-            camera.framerate = 30
+            camera.framerate = 5
 
             time.sleep(2)
 

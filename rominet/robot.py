@@ -24,7 +24,7 @@ class Robot(object):
         self.camera = Camera()
         self.log = logging.getLogger('romi')
 
-        self.set_speed_target(0, 0)
+        self.motors.stop()
 
     def set_speed_target(self, left, right):
         self.motors.set_speed_target(left, right)
