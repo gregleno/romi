@@ -1,5 +1,8 @@
 "use strict";
 var pollTime = 200;
+var fastPollTime = 200;
+var slowPollTime = 1000;
+
 var cameraPollTime = 1000;
 var refreshTabVisible = true
 
@@ -94,6 +97,8 @@ function poll() {
   }
 }
 
+var previousX = 123;
+var previousY = 134;
 function update_status(json) {
     if(json["connected"]) {
         $("#button0").html(json["buttons"][0] ? '1' : '0');
@@ -114,8 +119,18 @@ function update_status(json) {
         });
         $("#speedGauge").val(Number(json["speed"]));
 
-        $("#positionX").html(Number((json["position"][0]).toFixed(2)));
-        $("#positionY").html(Number((json["position"][1]).toFixed(2)));
+        var x = Number((json["position"][0]).toFixed(0));
+        var y = Number((json["position"][1]).toFixed(0));
+
+        if (previousX == x && previousY == y)
+            pollTime = slowPollTime;
+        else
+            pollTime = fastPollTime;
+        previousX = x;
+        previousY = y;
+
+        $("#positionX").html(x);
+        $("#positionY").html(y);
 
         $("#maxSpeedLeft").html(json["max_speed"][0]);
         $("#encoderLeft").html(json["encoders"][0]);
