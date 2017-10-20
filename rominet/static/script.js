@@ -1,5 +1,6 @@
 "use strict";
-var pollTime = 1000;
+var pollTime = 200;
+var cameraPollTime = 1000;
 var refreshTabVisible = true
 
 $(document).ready(function () {
@@ -17,6 +18,7 @@ $(document).ready(function () {
          refreshTabVisible = selectedTab == 0;
          if (refreshTabVisible) {
              poll();
+             pollCamera();
          }
      });
 
@@ -38,7 +40,7 @@ $(document).ready(function () {
              max: 10,
              height: 70,
              width: 70,
-             animationDuration: 1,
+             animationDuration: 100,
              caption: { value: '0', position: 'bottom', offset: [0, 0], visible: true },
              labels: { visible: false }
     });
@@ -59,9 +61,11 @@ $(document).ready(function () {
     $("#jqxRefreshButton").on('click', function () {
         toggleRefreshLabel();
         poll();
+        pollCamera();
     });
 
      poll();
+     pollCamera();
      setMotors(0, 0);
      programmer_init();
      joystick_init();
@@ -76,11 +80,17 @@ function toggleRefreshLabel(){
         $("#jqxRefreshButton").val('Refresh Off');
 }
 
+function pollCamera() {
+  if($("#jqxRefreshButton").jqxToggleButton('toggled') && refreshTabVisible) {
+      var d = new Date();
+      $("#web_cam").attr("src", "/rominet/api/camera?" + d.getTime());
+      setTimeout(pollCamera, cameraPollTime)
+  }
+}
+
 function poll() {
   if($("#jqxRefreshButton").jqxToggleButton('toggled') && refreshTabVisible) {
       $.ajax({url: "/rominet/api/status"}).done(update_status);
-      var d = new Date();
-      $("#web_cam").attr("src", "/rominet/api/camera?" + d.getTime());
   }
 }
 
@@ -91,7 +101,7 @@ function update_status(json) {
         $("#button2").html(json["buttons"][2] ? '1' : '0');
         $("#yaw").html(Number((json["yaw"]).toFixed(2)));
 
-        var volts = Number(json["battery"]) / 1000.;
+        var volts = Number((Number(json["battery"]) / 1000.)).toFixed(1);
         $("#batteryGauge").jqxGauge({
             caption: { value: volts, position: 'bottom', offset: [0, 0], visible: true },
         });
