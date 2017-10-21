@@ -181,7 +181,7 @@ function resetOdometry() {
 }
 
 function playNotes() {
-  notes = $('#notes').val();
+  var notes = $('#notes').val();
   var data = {
       notes: notes
   };
