@@ -91,3 +91,9 @@ class Robot(object):
             return True
         except IOError:
             return False
+
+    def rotate(self, angle, speed):
+        print("rotate: {}, {}".format(angle, speed))
+
+    def move_forward(self, distance):
+        print("move_forward: {}".format(distance))

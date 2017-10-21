@@ -64,6 +64,13 @@ class FakeRobot(object):
     def is_romi_board_connected(self):
         return True
 
+    def rotate(self, angle, speed):
+        print("rotate: {}, {}".format(angle, speed))
+
+    def move_forward(self, distance):
+        print("move_forward: {}".format(distance))
+
+
 
 if __name__ == '__main__':
     log = logging.getLogger('romi')
