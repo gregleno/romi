@@ -73,6 +73,14 @@ $(document).ready(function () {
      programmer_init();
      joystick_init();
      keypad_init();
+     $("#led_red").jqxToggleButton({ width: '50', toggled: true, template: 'danger'});
+     $("#led_green").jqxToggleButton({ width: '50', toggled: true, template: 'success'});
+     $("#led_yellow").jqxToggleButton({ width: '50', toggled: true, template: 'warning'});
+     $('#led_red').on('click', setLeds);
+     $('#led_green').on('click', setLeds);
+     $('#led_yellow').on('click', setLeds);
+
+
 });
 
 function toggleRefreshLabel(){
@@ -148,9 +156,10 @@ function update_status(json) {
 
 
 function setLeds() {
-  red = $('#led_red')[0].checked ? 1 : 0;
-  yellow = $('#led_yellow')[0].checked ? 1 : 0;
-  green = $('#led_green')[0].checked ? 1 : 0;
+  var red = $("#led_red").jqxToggleButton('toggled') ? 0 : 1;
+  var yellow = $("#led_yellow").jqxToggleButton('toggled') ? 0 : 1;
+  var green = $("#led_green").jqxToggleButton('toggled') ? 0 : 1;
+
   var data = {
       red: red,
       yellow: yellow,

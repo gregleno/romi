@@ -50,7 +50,7 @@ class AStar(object):
                 time.sleep(0.0001)
 
     def leds(self, red, yellow, green):
-        self.write_pack(0, 'BBB', red, yellow, green)
+        self.write_pack(0, 'BBB', yellow, green, red)
 
     def play_notes(self, notes):
         self.write_pack(24, 'B15s', 1, notes.encode("ascii"))
