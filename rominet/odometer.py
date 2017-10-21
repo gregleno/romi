@@ -107,8 +107,10 @@ class PositionMeter(object):
             self.fifo.appendleft((current_time, x, y, yaw, omega))
 
         self.last_time_ms = current_time
+        has_moved = self.last_count_left != encoder_left and self.last_count_right != encoder_right
         self.last_count_left = encoder_left
         self.last_count_right = encoder_right
+        return has_moved
 
     def get_xy(self):
         (current_time, x, y, yaw, omega) = self.fifo[0]
@@ -141,7 +143,7 @@ class Odometer(object):
     def _update(self):
         count_left, count_right = self.encoders.read_encoders()
         time_ms = current_time_ms()
-        self.pos.update(count_left, count_right, time_ms)
+        has_moved = self.pos.update(count_left, count_right, time_ms)
         self.speedometer.update(count_left, count_right, time_ms)
         if self.odom_measurement_callback is not None:
             current_time, x, y, yaw, omega = self.pos.get_pos()
@@ -149,6 +151,8 @@ class Odometer(object):
                                            self.speedometer.speed_right,
                                            x, y, yaw, omega,
                                            time_ms)
+
+        return has_moved
 
     def set_odom_measurement_callback(self, cb):
         self.odom_measurement_callback = cb
@@ -182,9 +186,14 @@ class Odometer(object):
         return self.speedometer.max_speed_left, self.speedometer.max_speed_right
 
     def _tracking_thread(self):
+        last_move_time = 0
         while True:
-            self._update()
-            self.tracking.wait()
+            if self._update():
+                last_move_time = time.time()
+            else:
+                if time.time() - last_move_time > 1:
+                    self.tracking.wait()
+                    last_move_time = time.time()
             time.sleep(1. / self.freq)
 
     def stop_tracking(self):
