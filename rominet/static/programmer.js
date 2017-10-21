@@ -1,21 +1,21 @@
 "use strict";
 
 function programmer_init(){
-    $("#Move_Forward").jqxButton({ width: 50, height: 50, imgWidth: 40, imgHeight: 40,
+    $("#Prog_Move_Forward").jqxButton({ width: 50, height: 50, imgWidth: 40, imgHeight: 40,
                                     imgSrc: "static/images/arrow-orange-up-300px.png" });
-    $("#Move_Backward").jqxButton({ width: 50, height: 50, imgWidth: 40, imgHeight: 40,
+    $("#Prog_Move_Backward").jqxButton({ width: 50, height: 50, imgWidth: 40, imgHeight: 40,
                                     imgSrc: "static/images/arrow-orange-down-300px.png" });
-    $("#Turn_Left").jqxButton({ width: 50, height: 50, imgWidth: 40, imgHeight: 40,
+    $("#Prog_Turn_Left").jqxButton({ width: 50, height: 50, imgWidth: 40, imgHeight: 40,
                                 imgSrc: "static/images/arrow-go-left-300px.png" });
-    $("#Turn_Right").jqxButton({ width: 50, height: 50, imgWidth: 40, imgHeight: 40,
+    $("#Prog_Turn_Right").jqxButton({ width: 50, height: 50, imgWidth: 40, imgHeight: 40,
                                  imgSrc: "static/images/arrow-go-right-300px.png" });
-    $("#Play_Note").jqxButton({ width: 50, height: 50, imgWidth: 40, imgHeight: 40,
+    $("#Prog_Play_Note").jqxButton({ width: 50, height: 50, imgWidth: 40, imgHeight: 40,
                                  imgSrc: "static/images/double-note-300px.png" });
-    $("#Erase_Program").jqxButton({ width: 50, height: 50, imgWidth: 40, imgHeight: 40,
+    $("#Prog_Erase_Program").jqxButton({ width: 50, height: 50, imgWidth: 40, imgHeight: 40,
                                  imgSrc: "static/images/Delete-Button-300px.png" });
-    $("#Play_Program").jqxButton({ width: 50, height: 50, imgWidth: 40, imgHeight: 40,
+    $("#Prog_Play_Program").jqxButton({ width: 50, height: 50, imgWidth: 40, imgHeight: 40,
                                  imgSrc: "static/images/round-green-play-button-on-300px.png" });
-    $("#Stop_Program").jqxButton({ width: 50, height: 50, imgWidth: 40, imgHeight: 40,
+    $("#Prog_Stop_Program").jqxButton({ width: 50, height: 50, imgWidth: 40, imgHeight: 40,
                                  imgSrc: "static/images/Stop-Sign-300px.png" });
 
     var fields = [
@@ -65,22 +65,22 @@ function programmer_init(){
             { text: "Program", dataField: "new",  maxItems: 7 }
         ]
     });
-    $("#Move_Forward").click(function () {
+    $("#Prog_Move_Forward").click(function () {
                     $('#kanban1').jqxKanban('addItem', { status: "new", resourceId: "up"});
                 });
-    $("#Move_Backward").click(function () {
+    $("#Prog_Move_Backward").click(function () {
                     $('#kanban1').jqxKanban('addItem', { status: "new", resourceId: "down"});
                 });
-    $("#Turn_Left").click(function () {
+    $("#Prog_Turn_Left").click(function () {
                     $('#kanban1').jqxKanban('addItem', { status: "new", resourceId: "left"});
                 });
-    $("#Turn_Right").click(function () {
+    $("#Prog_Turn_Right").click(function () {
                     $('#kanban1').jqxKanban('addItem', { status: "new", resourceId: "right"});
                 });
-    $("#Play_Note").click(function () {
+    $("#Prog_Play_Note").click(function () {
                     $('#kanban1').jqxKanban('addItem', { status: "new", resourceId: "note"});
                 });
-    $("#Erase_Program").click(function () {
+    $("#Prog_Erase_Program").click(function () {
                     var items = $('#kanban1').jqxKanban('getItems');
                     items.forEach(function(entry) {
                         if(entry)

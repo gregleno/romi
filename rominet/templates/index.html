@@ -25,6 +25,7 @@
         <script src="static/script.js?version=1"></script>
         <script src="static/joystick.js?version=1"></script>
         <script src="static/programmer.js?version=1"></script>
+        <script src="static/keypad.js?version=1"></script>
         <title>Rominet Control Panel</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     </head>
@@ -80,22 +81,22 @@
                             <table>
                                 <tr>
                                     <td></td>
-                                    <td><button id="Move_Forward"> </button></td>
+                                    <td><button id="Prog_Move_Forward"> </button></td>
                                     <td></td>
                                 </tr>
                                 <tr>
-                                    <td><button id="Turn_Left"></button></td>
-                                    <td><button id="Play_Note"></button></td>
-                                    <td><button id="Turn_Right"></button></td>
+                                    <td><button id="Prog_Turn_Left"></button></td>
+                                    <td><button id="Prog_Play_Note"></button></td>
+                                    <td><button id="Prog_Turn_Right"></button></td>
                                 </tr>
                                 <tr>
                                     <td></td>
-                                    <td><button id="Move_Backward"></button></td>
+                                    <td><button id="Prog_Move_Backward"></button></td>
                                 </tr>
                                 <tr>
-                                    <td><button id="Erase_Program"></button></td>
-                                    <td><button id="Play_Program"></button></td>
-                                    <td><button id="Stop_Program"></button></td>
+                                    <td><button id="Prog_Erase_Program"></button></td>
+                                    <td><button id="Prog_Play_Program"></button></td>
+                                    <td><button id="Prog_Stop_Program"></button></td>
                                 </tr>
                             </table>
                         </div>
@@ -111,6 +112,31 @@
                     </div>
                 </div>
                 <div class="container" id="tab3">
+                    <div class="row">
+                        <div class="col-xs-6">
+                            <table>
+                                <tr>
+                                    <td></td>
+                                    <td><button id="Move_Forward"> </button></td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td><button id="Turn_Left"></button></td>
+                                    <td><button id="Play_Note"></button></td>
+                                    <td><button id="Turn_Right"></button></td>
+                                    <td></td>
+                                    <td><button id="Stop_Program"></button></td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td><button id="Move_Backward"></button></td>
+                                </tr>
+                                <tr>
+                                </tr>
+                            </table>
+                        </div>
+
+                    </div>
                     <div class="row">
                         <div class="col-xs-6">
                             <table class="table table-striped">

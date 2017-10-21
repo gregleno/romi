@@ -72,6 +72,7 @@ $(document).ready(function () {
      setMotors(0, 0);
      programmer_init();
      joystick_init();
+     keypad_init();
 });
 
 function toggleRefreshLabel(){
