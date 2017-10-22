@@ -10,10 +10,6 @@ def bound_angle(angle):
     return angle % (2 * pi)
 
 
-def current_time_ms():
-    return int(round(time.time() * 1000))
-
-
 # width between wheels in millimeters
 WHEEL_DISTANCE_MM = 142.5
 # Distance travelled for per encoder click in millimeters
@@ -57,15 +53,15 @@ class Speedometer(object):
     def update(self, encoder_left, encoder_right, current_time):
         self.fifo.append((current_time, encoder_left, encoder_right))
 
-        (last_time_ms, last_count_left, last_count_right) = self.fifo[0]
-        delta_time_ms = current_time - last_time_ms
+        (last_time_s, last_count_left, last_count_right) = self.fifo[0]
+        delta_time_s = current_time - last_time_s
         delta_count_left = encoder_left - last_count_left
         delta_count_right = encoder_right - last_count_right
 
-        if delta_time_ms != 0:
-            self.speed_left = 1000 * delta_count_left / delta_time_ms
-            self.speed_right = 1000 * delta_count_right / delta_time_ms
-            self.velocity = 1000 * (delta_count_left + delta_count_right) / delta_time_ms
+        if delta_time_s != 0:
+            self.speed_left = delta_count_left / delta_time_s
+            self.speed_right = delta_count_right / delta_time_s
+            self.velocity = (delta_count_left + delta_count_right) / delta_time_s
             self.max_speed_left = max(self.max_speed_left, abs(self.speed_left))
             self.max_speed_right = max(self.max_speed_right, abs(self.speed_right))
 
@@ -74,54 +70,54 @@ class PositionMeter(object):
     def __init__(self):
         self.last_count_left = 0
         self.last_count_right = 0
-        self.last_time_ms = 0
+        self.last_time_s = 0
         self.dist = 0
-        self.fifo = deque([(current_time_ms(), 0, 0, 0, 0)], maxlen=1000)
+        self.fifo = deque([(time.time(), 0, 0, 0, 0, 0)], maxlen=1000)
 
     def reset(self):
         self.last_count_left = 0
         self.last_count_right = 0
-        self.last_time_ms = 0
+        self.last_time_s = 0
         self.dist = 0
-        self.fifo = deque([(current_time_ms(), 0, 0, 0, 0)], maxlen=1000)
+        self.fifo = deque([(time.time(), 0, 0, 0, 0, 0)], maxlen=1000)
 
     def update(self, encoder_left, encoder_right, current_time):
-        delta_time_ms = current_time - self.last_time_ms
+        delta_time_s = current_time - self.last_time_s
         delta_count_left = encoder_left - self.last_count_left
         delta_count_right = encoder_right - self.last_count_right
-        last_time_ms, x, y, yaw, omega = self.fifo[0]
+        last_time_s, x, y, yaw, omega, dist = self.fifo[0]
 
-        if self.last_time_ms != 0:
-            dist_left = delta_count_left * DISTANCE_PER_TICK_MM
-            dist_right = delta_count_right * DISTANCE_PER_TICK_MM
+        if self.last_time_s != 0:
+            dist_left = delta_count_left * DISTANCE_PER_TICK_MM / 1000
+            dist_right = delta_count_right * DISTANCE_PER_TICK_MM / 1000
             distance_center = (dist_left + dist_right) / 2.
             self.dist += distance_center
 
             x += distance_center * cos(yaw)
             y += distance_center * sin(yaw)
 
-            delta_yaw = (dist_right - dist_left) / WHEEL_DISTANCE_MM
+            delta_yaw = (dist_right - dist_left) / WHEEL_DISTANCE_MM / 1000
             yaw = bound_angle(yaw + delta_yaw)
-            omega = delta_yaw / delta_time_ms
+            omega = delta_yaw / delta_time_s
 
-            self.fifo.appendleft((current_time, x, y, yaw, omega))
+            self.fifo.appendleft((current_time, x, y, yaw, omega, self.dist))
 
-        self.last_time_ms = current_time
+        self.last_time_s = current_time
         has_moved = self.last_count_left != encoder_left and self.last_count_right != encoder_right
         self.last_count_left = encoder_left
         self.last_count_right = encoder_right
         return has_moved
 
     def get_xy(self):
-        (current_time, x, y, yaw, omega) = self.fifo[0]
+        (current_time, x, y, yaw, omega, dist) = self.fifo[0]
         return x, y
 
     def get_yaw(self):
-        (current_time, x, y, yaw, omega) = self.fifo[0]
+        (current_time, x, y, yaw, omega, dist) = self.fifo[0]
         return yaw
 
     def get_omega(self):
-        (current_time, x, y, yaw, omega) = self.fifo[0]
+        (current_time, x, y, yaw, omega, dist) = self.fifo[0]
         return omega
 
     def get_pos(self):
@@ -129,6 +125,7 @@ class PositionMeter(object):
 
 
 class Odometer(object):
+    thread = None
 
     def __init__(self, encoders):
         self.encoders = encoders
@@ -138,19 +135,23 @@ class Odometer(object):
         self.tracking = Event()
         self.tracking.clear()
         self.odom_measurement_callback = None
-        self.freq = 100
+        self.freq = 50
+        if Odometer.thread is None:
+            thread = Thread(target=self._tracking_thread)
+            thread.daemon = True
+            thread.start()
 
     def _update(self):
         count_left, count_right = self.encoders.read_encoders()
-        time_ms = current_time_ms()
-        has_moved = self.pos.update(count_left, count_right, time_ms)
-        self.speedometer.update(count_left, count_right, time_ms)
+        time_s = time.time()
+        has_moved = self.pos.update(count_left, count_right, time_s)
+        self.speedometer.update(count_left, count_right, time_s)
         if self.odom_measurement_callback is not None:
-            current_time, x, y, yaw, omega = self.pos.get_pos()
+            current_time, x, y, yaw, omega, dist = self.pos.get_pos()
             self.odom_measurement_callback(self.speedometer.speed_left,
                                            self.speedometer.speed_right,
-                                           x, y, yaw, omega,
-                                           time_ms)
+                                           x, y, yaw, omega, dist,
+                                           time_s)
 
         return has_moved
 
@@ -187,11 +188,12 @@ class Odometer(object):
 
     def _tracking_thread(self):
         last_move_time = 0
+        self.tracking.wait()
         while True:
             if self._update():
                 last_move_time = time.time()
             else:
-                if time.time() - last_move_time > 1:
+                if time.time() - last_move_time > 2:
                     self.tracking.wait()
                     last_move_time = time.time()
             time.sleep(1. / self.freq)
@@ -199,11 +201,6 @@ class Odometer(object):
     def stop_tracking(self):
         self.tracking.clear()
 
-    def track_odometry(self, freq=100):
+    def track_odometry(self, freq=50):
         self.freq = freq
         self.tracking.set()
-        if self.thread is None:
-            self.encoders.reset()
-            self.thread = Thread(target=self._tracking_thread)
-            self.thread.daemon = True
-            self.thread.start()

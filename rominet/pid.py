@@ -13,7 +13,7 @@ class PID(object):
 
     def get_output(self, set_point, read_value, current_time):
         if self.previous_time != 0:
-            step = float(current_time - self.previous_time) / 1000
+            step = float(current_time - self.previous_time)
         else:
             step = 0
 
@@ -29,6 +29,7 @@ class PID(object):
         value = (self.Kp * self.error +
                  self.Ki * self.error_integration +
                  self.Kd * self.error_derivative)
+
         if value > self.max_abs_value:
             value = self.max_abs_value
         if value < -self.max_abs_value:

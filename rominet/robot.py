@@ -95,5 +95,5 @@ class Robot(object):
     def rotate(self, angle, speed):
         print("rotate: {}, {}".format(angle, speed))
 
-    def move_forward(self, distance):
-        print("move_forward: {}".format(distance))
+    def move_forward(self, distance, speed):
+        self.motors.move_forward(distance, speed)

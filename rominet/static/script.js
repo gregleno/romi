@@ -136,8 +136,8 @@ function update_status(json) {
         });
         $("#speedGauge").val(Number(json["speed"]));
 
-        var x = Number((json["position"][0]).toFixed(0));
-        var y = Number((json["position"][1]).toFixed(0));
+        var x = Number((json["position"][0]).toFixed(3));
+        var y = Number((json["position"][1]).toFixed(3));
 
         if (previousX == x && previousY == y)
             pollTime = slowPollTime;

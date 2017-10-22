@@ -35,7 +35,7 @@ function keypad_init() {
         $.ajax({
             url: "rominet/api/move_forward",
             type: 'PUT',
-            data: JSON.stringify({ distance: 20 }),
+            data: JSON.stringify({ distance: 0.5, speed: 30 }),
             dataType: 'json',
             contentType: 'application/json; charset=utf-8'
         });
@@ -45,7 +45,7 @@ function keypad_init() {
         $.ajax({
             url: "rominet/api/move_forward",
             type: 'PUT',
-            data: JSON.stringify({ distance: -20 }),
+            data: JSON.stringify({ distance: -0.50, speed: 30 }),
             dataType: 'json',
             contentType: 'application/json; charset=utf-8'
         });
@@ -55,7 +55,7 @@ function keypad_init() {
         $.ajax({
             url: "rominet/api/rotate",
             type: 'PUT',
-            data: JSON.stringify({ speed: 20, angle: -90 }),
+            data: JSON.stringify({ speed: 30, angle: -90 }),
             dataType: 'json',
             contentType: 'application/json; charset=utf-8'
         });
@@ -65,7 +65,7 @@ function keypad_init() {
         $.ajax({
             url: "rominet/api/rotate",
             type: 'PUT',
-            data: JSON.stringify({ speed: 20, angle: 90 }),
+            data: JSON.stringify({ speed: 30, angle: 90 }),
             dataType: 'json',
             contentType: 'application/json; charset=utf-8'
         });

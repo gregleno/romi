@@ -67,8 +67,8 @@ class FakeRobot(object):
     def rotate(self, angle, speed):
         print("rotate: {}, {}".format(angle, speed))
 
-    def move_forward(self, distance):
-        print("move_forward: {}".format(distance))
+    def move_forward(self, distance, speed):
+        print("move_forward: {}:{}".format(distance, speed))
 
 
 

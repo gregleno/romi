@@ -100,7 +100,7 @@ def rotate():
     angle = request.json['angle']
     speed = request.json['speed']
     try:
-        robot.rotate(angle, speed)
+        robot.rotate(angle, speed/100.)
         return jsonify({})
     except IOError:
         return jsonify({'connected': False})
@@ -108,11 +108,11 @@ def rotate():
 
 @app.route("/rominet/api/move_forward", methods=['PUT'])
 def move_forward():
-    if 'distance' not in request.json or type(request.json['distance']) is not int:
+    if ('distance' not in request.json or type(request.json['distance']) is not float or
+       'speed' not in request.json or type(request.json['speed']) is not int):
         abort(400)
-    distance = request.json['distance']
     try:
-        robot.move_forward(distance)
+        robot.move_forward(request.json['distance'], request.json['speed']/100.)
         return jsonify({})
     except IOError:
         return jsonify({'connected': False})
