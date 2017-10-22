@@ -2,6 +2,7 @@
 
 import os
 import logging
+from math import pi
 
 from flask import Flask, jsonify, make_response, request, abort, render_template, redirect
 # from rominet.robot import Robot
@@ -97,10 +98,10 @@ def rotate():
         abort(400)
     if 'speed' not in request.json or type(request.json['speed']) is not int:
         abort(400)
-    angle = request.json['angle']
-    speed = request.json['speed']
+    angle = request.json['angle'] * pi / 180.
+    speed = request.json['speed'] * pi / 180.
     try:
-        robot.rotate(angle, speed/100.)
+        robot.rotate(angle, speed)
         return jsonify({})
     except IOError:
         return jsonify({'connected': False})

@@ -66,9 +66,6 @@ class Robot(object):
     def get_speed(self):
         return self.odometer.get_speed()
 
-    def get_max_speed_left_right(self):
-        return self.odometer.get_max_speed_left_right()
-
     def set_leds(self, red, yellow, green):
         self.a_star.leds(red, yellow, green)
 
@@ -87,13 +84,13 @@ class Robot(object):
 
     def is_romi_board_connected(self):
         try:
-            mv, = self.a_star.read_battery_millivolts()
+            self.a_star.read_battery_millivolts()
             return True
         except IOError:
             return False
 
     def rotate(self, angle, speed):
-        print("rotate: {}, {}".format(angle, speed))
+        self.motors.rotate(angle, speed)
 
     def move_forward(self, distance, speed):
         self.motors.move_forward(distance, speed)
