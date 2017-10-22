@@ -126,7 +126,6 @@ def get_status():
                 'position': robot.get_position_xy(),
                 'encoders': robot.get_encoders(),
                 'speed': robot.get_speed(),
-                'max_speed': robot.get_max_speed_left_right(),
                 'distance': robot.get_distance(),
                 'yaw': robot.get_yaw(),
                 'buttons': robot.read_buttons()}

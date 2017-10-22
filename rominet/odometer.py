@@ -1,5 +1,5 @@
 import time
-from collections import deque
+from collections import deque, namedtuple
 from threading import Thread, Event
 from math import pi, cos, sin
 
@@ -14,6 +14,8 @@ def bound_angle(angle):
 WHEEL_DISTANCE_MM = 142.5
 # Distance travelled for per encoder click in millimeters
 DISTANCE_PER_TICK_MM = .152505
+
+Pos = namedtuple("Pos", ("x", "y", "speed_left", "speed_right", "yaw", "omega", "dist", "speed", "time"))
 
 
 # Function relative_angle(angleRef, angle) returns the shortest relative
@@ -35,8 +37,6 @@ def relative_angle(angle_ref, angle):
 
 class Speedometer(object):
     def __init__(self):
-        self.max_speed_left = 0
-        self.max_speed_right = 0
         self.speed_left = 0
         self.speed_right = 0
         self.velocity = 0
@@ -44,8 +44,6 @@ class Speedometer(object):
 
     def reset(self):
         self.fifo.clear()
-        self.max_speed_left = 0
-        self.max_speed_right = 0
         self.speed_left = 0
         self.speed_right = 0
         self.velocity = 0
@@ -62,8 +60,6 @@ class Speedometer(object):
             self.speed_left = delta_count_left / delta_time_s
             self.speed_right = delta_count_right / delta_time_s
             self.velocity = (delta_count_left + delta_count_right) / delta_time_s
-            self.max_speed_left = max(self.max_speed_left, abs(self.speed_left))
-            self.max_speed_right = max(self.max_speed_right, abs(self.speed_right))
 
 
 class PositionMeter(object):
@@ -88,15 +84,15 @@ class PositionMeter(object):
         last_time_s, x, y, yaw, omega, dist = self.fifo[0]
 
         if self.last_time_s != 0:
-            dist_left = delta_count_left * DISTANCE_PER_TICK_MM / 1000
-            dist_right = delta_count_right * DISTANCE_PER_TICK_MM / 1000
+            dist_left = delta_count_left * DISTANCE_PER_TICK_MM / 1000.
+            dist_right = delta_count_right * DISTANCE_PER_TICK_MM / 1000.
             distance_center = (dist_left + dist_right) / 2.
             self.dist += distance_center
 
             x += distance_center * cos(yaw)
             y += distance_center * sin(yaw)
 
-            delta_yaw = (dist_right - dist_left) / WHEEL_DISTANCE_MM / 1000
+            delta_yaw = (dist_right - dist_left) / WHEEL_DISTANCE_MM * 1000.
             yaw = bound_angle(yaw + delta_yaw)
             omega = delta_yaw / delta_time_s
 
@@ -182,9 +178,6 @@ class Odometer(object):
 
     def get_speed_left_right(self):
         return self.speedometer.speed_left, self.speedometer.speed_right
-
-    def get_max_speed_left_right(self):
-        return self.speedometer.max_speed_left, self.speedometer.max_speed_right
 
     def _tracking_thread(self):
         last_move_time = 0

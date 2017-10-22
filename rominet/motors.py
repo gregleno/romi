@@ -1,5 +1,6 @@
 from rominet.pid import PID
 import logging
+from math import pi
 
 
 class Motors(object):
@@ -12,9 +13,11 @@ class Motors(object):
         self.pid_speed_left = PID(0.08, 2, 0, self.max_speed)
         self.pid_speed_right = PID(0.08, 2, 0, self.max_speed)
         self.pid_distance = PID(2, 0.1, 0.0, 1)
+        self.pid_yaw = PID(2, 0, 0.0, 1)
         self.set_point_speed_left = 0
         self.set_point_speed_right = 0
         self.set_point_distance = 0
+        self.set_point_yaw = 0
         self.last_send_left = -1000
         self.last_send_right = -1000
         self.a_star.motors(0, 0)
@@ -27,23 +30,19 @@ class Motors(object):
     def cap(self, x, max):
         if x > max:
             x = max
-            self.log.warning("X command greater than 1")
         if x < -max:
             x = -max
-            self.log.warning("X command lower than -1")
         return x
 
     def set_speed_target(self, left, right):
         self.odometer.track_odometry()
         self.set_point_speed_left = self.convert_command_to_speed(left)
         self.set_point_speed_right = self.convert_command_to_speed(right)
-        print("set_speed_left: {} set_speed_right: {}".format(self.set_point_speed_left, self.set_point_speed_right))
-
         self.set_point_distance = 0
 
     def move_forward(self, distance, speed):
-        print("move fwd {} {}".format(distance, speed))
         self.set_point_distance = self.odometer.get_distance() + distance
+        self.set_point_yaw = self.odometer.get_yaw()
         self.pid_distance.max_abs_value = self.cap(speed, 1)
         self.odometer.track_odometry()
 
@@ -62,8 +61,21 @@ class Motors(object):
                 self.pid_distance.reset()
             else:
                 speed_cmd = self.pid_distance.get_output(self.set_point_distance, dist, current_time)
-            print("speed_cmd: {}".format(speed_cmd))
-            self.set_point_speed_left = self.set_point_speed_right = speed_cmd * self.max_speed
+
+            if self.set_point_yaw - yaw > pi:
+                yaw = yaw + 2 * pi
+            elif self.set_point_yaw - yaw < -pi:
+                yaw = yaw - 2 * pi
+            delta = self.pid_yaw.get_output(self.set_point_yaw, yaw, current_time)
+
+            # going backward, right and left motors have an inverted effect on rotation
+            if speed_cmd < 0:
+                delta = -delta
+
+            self.set_point_speed_left = speed_cmd * self.max_speed * (1 - delta / 2)
+            self.set_point_speed_right = speed_cmd * self.max_speed * (1 + delta / 2)
+            print("delta:{}".format(speed_cmd, delta))
+            print("yaw: {} set_point_yaw:{}\n".format(yaw * 180 / pi, self.set_point_yaw * 180 / pi))
 
         left_speed_cmd = self.pid_speed_left.get_output(self.set_point_speed_left, speed_left, current_time)
         right_speed_cmd = self.pid_speed_right.get_output(self.set_point_speed_right, speed_right, current_time)
@@ -71,15 +83,8 @@ class Motors(object):
         left_cmd = int(left_speed_cmd * self.max_cmd / self.max_speed)
         right_cmd = int(right_speed_cmd * self.max_cmd / self.max_speed)
 
-        # do not add more than 1/3 of acceleration
-        left_acc = self.cap((left_cmd - self.last_send_left), self.max_cmd / 50)
-        left_cmd = self.last_send_left + left_acc
-        right_acc = self.cap((right_cmd - self.last_send_right), self.max_cmd / 50)
-        right_cmd = self.last_send_right + right_acc
-
-
-        print("left_cmd: {} right_cmd: {}".format(left_cmd/self.max_cmd, right_cmd/self.max_cmd))
-        print("dist: {} \n".format(dist))
+        # print("left_cmd: {} right_cmd: {}".format(left_cmd/self.max_cmd, right_cmd/self.max_cmd))
+        # print("dist: {} x:{} y:{} \n".format(dist, x, y))
         if self.set_point_speed_left == 0 and self.set_point_speed_right == 0:
             if abs(left_cmd) < 20 and abs(right_cmd) < 20:
                 left_cmd = 0

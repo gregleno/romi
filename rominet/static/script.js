@@ -1,7 +1,7 @@
 "use strict";
 
-var pollTime = 200;
 var fastPollTime = 200;
+var pollTime = slowPollTime;
 var slowPollTime = 1000;
 
 var cameraPollTime = 1000;
@@ -51,7 +51,7 @@ $(document).ready(function () {
         max: 10,
         height: 70,
         width: 70,
-        animationDuration: 100,
+        animationDuration: 1,
         caption: { value: '0', position: 'bottom', offset: [0, 0], visible: true },
         labels: { visible: false }
     });
@@ -63,7 +63,7 @@ $(document).ready(function () {
         max: 4000,
         height: 70,
         width: 70,
-        animationDuration: 100,
+        animationDuration: 200,
         labels: { visible: false },
         caption: { value: '0', position: 'bottom', offset: [0, 0], visible: true },
     });
@@ -149,9 +149,7 @@ function update_status(json) {
         $("#positionX").html(x);
         $("#positionY").html(y);
 
-        $("#maxSpeedLeft").html(json["max_speed"][0]);
         $("#encoderLeft").html(json["encoders"][0]);
-        $("#maxSpeedRight").html(json["max_speed"][1]);
         $("#encoderRight").html(json["encoders"][1]);
         setTimeout(poll, pollTime);
     } else {

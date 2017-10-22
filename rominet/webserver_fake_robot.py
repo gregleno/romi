@@ -46,9 +46,6 @@ class FakeRobot(object):
     def get_speed(self):
         return self.delta_time_ms() % 4000
 
-    def get_max_speed_left_right(self):
-        return 3456, 2637
-
     def set_leds(self, red, yellow, green):
         pass
 
@@ -69,7 +66,6 @@ class FakeRobot(object):
 
     def move_forward(self, distance, speed):
         print("move_forward: {}:{}".format(distance, speed))
-
 
 
 if __name__ == '__main__':
