@@ -32,7 +32,6 @@ class Odometer(object):
         self.fifo = deque(maxlen=1000)
         self.fifo.appendleft((0, 0, 0, 0, 0, 0, 0, 0, 0))
 
-
         if Odometer.thread is None:
             thread = Thread(target=self._tracking_thread)
             thread.daemon = True

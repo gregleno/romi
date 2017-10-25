@@ -6,7 +6,7 @@ def readme():
 
 
 setup(name='rominet',
-      version='0.1',
+      version='1.0',
       description='A package to interact with a romi based robot',
       long_description=readme(),
       url='https://github.com/gregleno/romi',
@@ -21,4 +21,5 @@ setup(name='rominet',
       ],
       test_suite='pytest',
       tests_require=['pytest'],
-      zip_safe=False)
+      zip_safe=False,
+      include_package_data=True)
