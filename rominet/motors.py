@@ -195,10 +195,10 @@ class Motors(object):
         left_cmd = int(left_speed_cmd * self.max_cmd / self.max_speed)
 
         right_cmd = int(right_speed_cmd * self.max_cmd / self.max_speed)
-        if count % 25 == 0:
-            print("yaw: {} ".format(int(yaw * 180. / pi*10)/10.))
-            print("dist: {} x:{} y:{} \n".format(int(dist*1000)/1000., int(x*1000)/1000.,
-                                                 int(y*1000)/1000.))
+        # if count % 25 == 0:
+        #    print("yaw: {} ".format(int(yaw * 180. / pi*10)/10.))
+        #    print("dist: {} x:{} y:{} \n".format(int(dist*1000)/1000., int(x*1000)/1000.,
+        #                                         int(y*1000)/1000.))
         if set_point_speed_left == 0 and set_point_speed_right == 0:
             if abs(left_cmd) < 20 and abs(right_cmd) < 20:
                 left_cmd = 0

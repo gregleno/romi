@@ -137,9 +137,9 @@ function play_program(index) {
     }
     if(items.length > index){
         console.log(items[index]);
-        do_action(items[index].resourceId);
+        var sleep_time = do_action(items[index].resourceId);
         //$('#kanban1').jqxKanban('updateItem', items[index].id, { enabled: true });
-        setTimeout(play_program, 4000, index+1);
+        setTimeout(play_program, sleep_time, index+1);
     } else {
         $("#Prog_Play_Program").jqxButton({disabled: false});   
     }
@@ -148,21 +148,28 @@ function play_program(index) {
 function do_action(resourceId) {
     if(resourceId == "up"){
         move_forward();
+        return 3000;
     } else if(resourceId == "down"){
         move_backward();
+        return 3000;
     } else if(resourceId == "left"){
         turn_left();
+        return 4000;
     } else if(resourceId == "right"){
         turn_right();
+        return 4000;
     } else if(resourceId == "note"){
+        play_note();
+        return 1000;
     }
+    return 4000;
 }    
 
 function turn_left() {
     $.ajax({
         url: "rominet/api/rotate",
         type: 'PUT',
-        data: JSON.stringify({ speed: 60, angle: -90 }),
+        data: JSON.stringify({ speed: 90, angle: -90 }),
         dataType: 'json',
         contentType: 'application/json; charset=utf-8'
     });
@@ -172,7 +179,7 @@ function turn_right() {
     $.ajax({
         url: "rominet/api/rotate",
         type: 'PUT',
-        data: JSON.stringify({ speed: 60, angle: 90 }),
+        data: JSON.stringify({ speed: 90, angle: 90 }),
         dataType: 'json',
         contentType: 'application/json; charset=utf-8'
     });
@@ -182,7 +189,7 @@ function move_forward() {
     $.ajax({
         url: "rominet/api/move_forward",
         type: 'PUT',
-        data: JSON.stringify({ distance: 0.25, speed: 30 }),
+        data: JSON.stringify({ distance: 0.25, speed: 40 }),
         dataType: 'json',
         contentType: 'application/json; charset=utf-8'
     });
@@ -192,7 +199,20 @@ function move_backward() {
     $.ajax({
         url: "rominet/api/move_forward",
         type: 'PUT',
-        data: JSON.stringify({ distance: -0.25, speed: 30 }),
+        data: JSON.stringify({ distance: -0.25, speed: 40 }),
+        dataType: 'json',
+        contentType: 'application/json; charset=utf-8'
+    });
+}
+
+function play_note() {
+    var data = {
+        notes: 'l16ceg>c'
+    };
+    $.ajax({
+        url: "rominet/api/notes",
+        type: 'PUT',
+        data: JSON.stringify(data),
         dataType: 'json',
         contentType: 'application/json; charset=utf-8'
     });

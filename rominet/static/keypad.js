@@ -35,7 +35,7 @@ function keypad_init() {
         $.ajax({
             url: "rominet/api/move_forward",
             type: 'PUT',
-            data: JSON.stringify({ distance: 0.50, speed: 50 }),
+            data: JSON.stringify({ distance: 0.25, speed: 50 }),
             dataType: 'json',
             contentType: 'application/json; charset=utf-8'
         });
@@ -45,7 +45,7 @@ function keypad_init() {
         $.ajax({
             url: "rominet/api/move_forward",
             type: 'PUT',
-            data: JSON.stringify({ distance: -0.50, speed: 50 }),
+            data: JSON.stringify({ distance: -0.25, speed: 50 }),
             dataType: 'json',
             contentType: 'application/json; charset=utf-8'
         });
@@ -55,7 +55,7 @@ function keypad_init() {
         $.ajax({
             url: "rominet/api/rotate",
             type: 'PUT',
-            data: JSON.stringify({ speed: 180, angle: -90 }),
+            data: JSON.stringify({ speed: 90, angle: -90 }),
             dataType: 'json',
             contentType: 'application/json; charset=utf-8'
         });
@@ -72,10 +72,13 @@ function keypad_init() {
     });
 
     $("#Play_Note").click(function () {
+        var data = {
+            notes: 'l16ceg>c'
+        };
         $.ajax({
-            url: "rominet/api/rotate",
+            url: "rominet/api/notes",
             type: 'PUT',
-            data: JSON.stringify({ speed: 180, angle: 180 }),
+            data: JSON.stringify(data),
             dataType: 'json',
             contentType: 'application/json; charset=utf-8'
         });
