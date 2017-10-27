@@ -38,11 +38,12 @@ function programmer_init() {
         { name: "resourceId", type: "number" },
         { name: "status", map: "state", type: "string" },
         { name: "id", type: "string" },
+        { name: "color", map: "hex", type: "string" },
     ];
     var source =
         {
             localData: [
-                { state: "new", resourceId: "up", id: "0"},
+                { state: "new", resourceId: "up", id: "0", hex: "#3c87a8"},
             ],
             dataType: "array",
             dataFields: fields
@@ -71,6 +72,7 @@ function programmer_init() {
 
     $('#kanban1').jqxKanban({
         template: "<div class='jqx-kanban-item' id='' >"
+        + "<div class='jqx-kanban-item-color-status'></div>"
         + "<div class='jqx-kanban-item-avatar'></div>"
         + "</div>",
         width: '100%',
@@ -82,19 +84,19 @@ function programmer_init() {
         ]
     });
     $("#Prog_Move_Forward").click(function () {
-        $('#kanban1').jqxKanban('addItem', { status: "new", resourceId: "up" });
+        $('#kanban1').jqxKanban('addItem', { status: "new", resourceId: "up", color: "#3c87a8" });
     });
     $("#Prog_Move_Backward").click(function () {
-        $('#kanban1').jqxKanban('addItem', { status: "new", resourceId: "down" });
+        $('#kanban1').jqxKanban('addItem', { status: "new", resourceId: "down", color: "#3c87a8" });
     });
     $("#Prog_Turn_Left").click(function () {
-        $('#kanban1').jqxKanban('addItem', { status: "new", resourceId: "left" });
+        $('#kanban1').jqxKanban('addItem', { status: "new", resourceId: "left", color: "#3c87a8" });
     });
     $("#Prog_Turn_Right").click(function () {
-        $('#kanban1').jqxKanban('addItem', { status: "new", resourceId: "right" });
+        $('#kanban1').jqxKanban('addItem', { status: "new", resourceId: "right", color: "#3c87a8" });
     });
     $("#Prog_Play_Note").click(function () {
-        $('#kanban1').jqxKanban('addItem', { status: "new", resourceId: "note" });
+        $('#kanban1').jqxKanban('addItem', { status: "new", resourceId: "note", color: "#3c87a8" });
     });
     $("#Prog_Erase_Program").click(function () {
         interrupted = true;
@@ -120,10 +122,9 @@ function programmer_init() {
 var interrupted = false;
 
 function play_program(index) {
-    console.log("play index " + index);
     var items = $('#kanban1').jqxKanban('getItems');
-    if(items.length > index - 1){
-        //$('#kanban1').jqxKanban('updateItem', items[index-1].id, { enabled: false });
+    if(items.length > index - 1 && index > 0){
+        $('#kanban1').jqxKanban('updateItem', items[index-1].id, { color: "#3c87a8" });
     }
     if(interrupted) {
         $("#Prog_Play_Program").jqxButton({disabled: false});   
@@ -136,9 +137,8 @@ function play_program(index) {
         });    
     }
     if(items.length > index){
-        console.log(items[index]);
         var sleep_time = do_action(items[index].resourceId);
-        //$('#kanban1').jqxKanban('updateItem', items[index].id, { enabled: true });
+        $('#kanban1').jqxKanban('updateItem', items[index].id, { color: "#ff7878" });
         setTimeout(play_program, sleep_time, index+1);
     } else {
         $("#Prog_Play_Program").jqxButton({disabled: false});   
