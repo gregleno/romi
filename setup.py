@@ -22,4 +22,8 @@ setup(name='rominet',
       test_suite='pytest',
       tests_require=['pytest'],
       zip_safe=False,
+      package_data={
+          'rominet': ['rominet/templates/**/*',
+		      'rominet/static/**/*.js']
+      },
       include_package_data=True)

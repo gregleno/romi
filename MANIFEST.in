@@ -1,5 +1,5 @@
-include README.rst
-include rominet/images/*
-include rominet/static/*
-include rominet/templates/*
+# include README.rst
+recursive-include rominet/images **
+recursive-include rominet/static **
+recursive-include rominet/templates **
 
