@@ -85,18 +85,23 @@ function programmer_init() {
     });
     $("#Prog_Move_Forward").click(function () {
         $('#kanban1').jqxKanban('addItem', { status: "new", resourceId: "up", color: "#3c87a8" });
+        check_has_max_items();
     });
     $("#Prog_Move_Backward").click(function () {
         $('#kanban1').jqxKanban('addItem', { status: "new", resourceId: "down", color: "#3c87a8" });
+        check_has_max_items();
     });
     $("#Prog_Turn_Left").click(function () {
         $('#kanban1').jqxKanban('addItem', { status: "new", resourceId: "left", color: "#3c87a8" });
+        check_has_max_items();
     });
     $("#Prog_Turn_Right").click(function () {
         $('#kanban1').jqxKanban('addItem', { status: "new", resourceId: "right", color: "#3c87a8" });
+        check_has_max_items();
     });
     $("#Prog_Play_Note").click(function () {
         $('#kanban1').jqxKanban('addItem', { status: "new", resourceId: "note", color: "#3c87a8" });
+        check_has_max_items();
     });
     $("#Prog_Erase_Program").click(function () {
         interrupted = true;
@@ -106,10 +111,12 @@ function programmer_init() {
             if (entry)
                 $('#kanban1').jqxKanban('removeItem', entry.id);
         });
+        disable_actions(false);
     });
 
     $("#Prog_Play_Program").click(function () {
         if(!$('#Prog_Play_Program').jqxButton('disabled')){
+            disable_actions(true);
             play_program(0);
         }
     });
@@ -121,6 +128,34 @@ function programmer_init() {
 }
 var interrupted = false;
 
+function check_has_max_items() {
+    var items = $('#kanban1').jqxKanban('getItems');
+    if (items.length >= $('#kanban1').jqxKanban('getColumn', 'new').maxItems) {
+        disable_actions(true);
+    } else {
+        disable_actions(false);
+    }
+
+}
+
+function disable_actions(disabled) {
+    $("#Prog_Move_Forward").jqxButton({
+        disabled: disabled
+    });
+    $("#Prog_Move_Backward").jqxButton({
+        disabled: disabled
+    });
+    $("#Prog_Turn_Left").jqxButton({
+        disabled: disabled
+    });
+    $("#Prog_Turn_Right").jqxButton({
+        disabled: disabled
+    });
+    $("#Prog_Play_Note").jqxButton({
+        disabled: disabled
+    });
+}
+
 function play_program(index) {
     var items = $('#kanban1').jqxKanban('getItems');
     if(items.length > index - 1 && index > 0){
@@ -129,6 +164,7 @@ function play_program(index) {
     if(interrupted) {
         $("#Prog_Play_Program").jqxButton({disabled: false});   
         interrupted = false 
+        disable_actions(false);
         return;
     }
     if(index == 0){
@@ -141,7 +177,8 @@ function play_program(index) {
         $('#kanban1').jqxKanban('updateItem', items[index].id, { color: "#ff7878" });
         setTimeout(play_program, sleep_time, index+1);
     } else {
-        $("#Prog_Play_Program").jqxButton({disabled: false});   
+        $("#Prog_Play_Program").jqxButton({disabled: false});
+        disable_actions(false);
     }
 }
 
