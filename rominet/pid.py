@@ -29,11 +29,11 @@ class PID(object):
                  self.Ki * self.error_integration +
                  self.Kd * self.error_derivative)
 
-        if self.print_i and set_point != 0:
-            print("setpoint: {}".format(int(set_point)))
-            print("P: {} Kp*E: {}".format(int(self.error), int(self.Kp * self.error)))
-            print("I: {} Ki*I: {}".format(int(self.error_integration),
-                                          int(self.Ki * self.error_integration)))
+        if self.print_i:
+            print("setpoint: {}".format(round(set_point, 2)))
+            print("P: {} Kp*E: {}".format(round(self.error, 2), int(self.Kp * self.error)))
+            print("I: {} Ki*I: {}".format(round(self.error_integration, 2),
+                                          round(self.Ki * self.error_integration, 2)))
             print("D: {} Kd*D: {}\n".format(int(self.error_derivative),
                                             int(self.Kd * self.error_derivative)))
         if value > self.max_abs_value:

@@ -66,7 +66,7 @@ class Odometer(object):
             self.fifo.appendleft((current_time, x, y, yaw, omega, dist, speed_l, speed_r, velocity))
 
         self.last_time_s = current_time
-        has_moved = self.last_count_left != encoder_left and self.last_count_right != encoder_right
+        has_moved = self.last_count_left != encoder_left or self.last_count_right != encoder_right
         self.last_count_left = encoder_left
         self.last_count_right = encoder_right
 
@@ -117,7 +117,7 @@ class Odometer(object):
             if self._update():
                 last_move_time = time.time()
             else:
-                if time.time() - last_move_time > 10:
+                if time.time() - last_move_time > 1:
                     self.tracking.wait()
                     last_move_time = time.time()
             time.sleep(1. / self.freq)
