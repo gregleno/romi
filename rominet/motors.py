@@ -1,9 +1,9 @@
-from rominet.pid import PID
+from pid import PID
 import logging
 from math import pi
-from rominet.commands.speed import Speed
-from rominet.commands.move_straight import MoveStraight
-from rominet.commands.rotate import Rotate
+from commands.speed import Speed
+from commands.move_straight import MoveStraight
+from commands.rotate import Rotate
 
 
 class Motors(object):

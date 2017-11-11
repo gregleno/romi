@@ -5,7 +5,6 @@ import logging
 from math import pi
 
 from flask import Flask, jsonify, make_response, request, abort, render_template, redirect
-# from rominet.robot import Robot
 
 
 app = Flask("rominet")

@@ -117,6 +117,7 @@ function programmer_init() {
     $("#Prog_Play_Program").click(function () {
         if(!$('#Prog_Play_Program').jqxButton('disabled')){
             disable_actions(true);
+            interrupted = false;
             play_program(0);
         }
     });

@@ -4,9 +4,9 @@ import logging
 import os
 from threading import Thread
 from time import sleep
-from rominet.robot import Robot
-from rominet.robot_wii_controler import RobotWiiController
-from rominet.webserver import run_web_server
+from robot import Robot
+from robot_wii_controler import RobotWiiController
+from webserver import run_web_server
 
 
 def main():

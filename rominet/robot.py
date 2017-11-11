@@ -1,10 +1,10 @@
 import logging
 import time
-from rominet.a_star import AStar
-from rominet.motors import Motors
-from rominet.camera import Camera
-from rominet.odometer import Odometer
-from rominet.encoders import Encoders
+from a_star import AStar
+from motors import Motors
+from camera import Camera
+from odometer import Odometer
+from encoders import Encoders
 
 NO_LED = (0, 0, 0)
 ALL_LEDS = (1, 1, 1)

@@ -2,7 +2,7 @@
 
 import logging
 import time
-from rominet.webserver import run_web_server
+from webserver import run_web_server
 
 
 class FakeRobot(object):
