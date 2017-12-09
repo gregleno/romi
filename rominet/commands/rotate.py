@@ -1,7 +1,7 @@
 from math import degrees, pi
 from rominet.pid import PID
-from rominet.commands.command import Command
-import rominet.commands.utils as utils
+from rominet.commands.utils import get_yaw_delta
+from rominet.commands import Command
 
 
 class Rotate(Command):
@@ -20,7 +20,7 @@ class Rotate(Command):
             self.achieved = True
             speed_cmd = 0
         else:
-            rotation_speed = utils.get_yaw_delta(self.yaw, yaw, self.pid_angle, current_time)
+            rotation_speed = get_yaw_delta(self.yaw, yaw, self.pid_angle, current_time)
             speed_cmd = self.pid_rotation_speed.get_output(rotation_speed, omega, current_time)
 
         return speed_cmd, -speed_cmd

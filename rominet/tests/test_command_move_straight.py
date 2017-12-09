@@ -1,5 +1,5 @@
 from math import radians
-from rominet.commands.move_straight import MoveStraight
+from rominet.commands import MoveStraight
 
 
 def test_move_simple():

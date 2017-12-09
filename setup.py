@@ -7,7 +7,7 @@ def readme():
 
 
 setup(name='rominet',
-      version='1.0',
+      version='1.1.1',
       description='A package to interact with a romi based robot',
       long_description=readme(),
       url='https://github.com/gregleno/romi',

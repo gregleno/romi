@@ -1,12 +1,11 @@
-*.pyc
+**/*.pyc
 *.smbdelete*
 /dist/
 /*.egg-info
 /*.eggs
 /build/
 **/*.DS_Store
-.idea/**
+.idea
 /rominet/static/._images
-/rominet/static/._.DS_Store
-/.idea/
 romi.iml
+.cache
