@@ -1,9 +1,9 @@
 from pid import PID
 import logging
 from math import pi
-from commands.speed import Speed
-from commands.move_straight import MoveStraight
-from commands.rotate import Rotate
+from commands import Speed
+from commands import MoveStraight
+from commands import Rotate
 
 
 class Motors(object):
