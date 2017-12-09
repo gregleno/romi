@@ -1,4 +1,5 @@
-from setuptools import setup
+from setuptools import setup, find_packages
+
 
 def readme():
     with open('README.rst') as f:
@@ -12,7 +13,7 @@ setup(name='rominet',
       url='https://github.com/gregleno/romi',
       author='Gregory Lenoble',
       license='GPLv3',
-      packages=['rominet'],
+      packages=find_packages(),
       entry_points={
         'console_scripts': ['rominet-service=rominet.service:main'],
       },
