@@ -2,12 +2,14 @@ import io
 import time
 from picamera import PiCamera
 import threading
+import os.path
 
 
 class Camera(object):
     thread = None
-    frame = None
+    frame = open(os.path.join(os.path.dirname(__file__), 'images/black.jpg'), 'rb').read()
     last_access = 0
+    resolution = (320, 240)
 
     def get_camera_frame(self):
         Camera.last_access = time.time()
@@ -24,15 +26,15 @@ class Camera(object):
     @classmethod
     def _thread(cls):
         with PiCamera() as camera:
-            camera.resolution = (320, 240)
+            camera.resolution = cls.resolution
             camera.rotation = 180
             camera.framerate = 5
 
             time.sleep(2)
 
             stream = io.BytesIO()
-            for foo in camera.capture_continuous(stream, 'jpeg',
-                                                 use_video_port=True):
+            for _ in camera.capture_continuous(stream, 'jpeg',
+                                               use_video_port=True):
                 stream.seek(0)
                 cls.frame = stream.read()
                 stream.seek(0)

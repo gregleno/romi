@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import os.path
 import logging
 import time
 from webserver import run_web_server
@@ -10,7 +11,9 @@ class FakeRobot(object):
     def __init__(self):
         self.position = (0, 0)
         self.start_time = int(round(time.time() * 1000))
-        self.frames = [open('images/' + f + '.jpg', 'rb').read() for f in ['1', '2', '3']]
+        self.frames = [open(os.path.join(os.path.dirname(__file__),
+                                         'images/' + f + '.jpg', 'rb')).read()
+                       for f in ['1', '2', '3']]
 
     def set_speed_target(self, left, right):
         log.info("Set speed %f:%f", left, right)

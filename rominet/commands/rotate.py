@@ -1,7 +1,7 @@
 from math import degrees, pi
 from rominet.pid import PID
 from rominet.commands.utils import get_yaw_delta
-from rominet.commands import Command
+from rominet.commands.command import Command
 
 
 class Rotate(Command):
