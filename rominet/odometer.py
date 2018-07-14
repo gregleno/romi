@@ -58,7 +58,7 @@ class Odometer(object):
             dist = last_situation.dist + distance_center
 
             x = last_situation.x + distance_center * cos(last_situation.yaw)
-            y = last_situation.x + distance_center * sin(last_situation.yaw)
+            y = last_situation.y + distance_center * sin(last_situation.yaw)
 
             delta_yaw = (dist_left - dist_right) / WHEEL_DISTANCE_MM * 1000.
             yaw = bound_angle(last_situation.yaw + delta_yaw)

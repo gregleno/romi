@@ -14,10 +14,9 @@ class TestOdometer(unittest.TestCase):
         encoder.read_encoders.return_value = 0, 0
         odom = Odometer(encoder)
         odom.track_odometry()
-        odom.stop_tracking()
 
-        time.sleep(0.1)
-        encoder.read_encoders.assert_called()
+        odom.stop_tracking()
+        time.sleep(0.3)
 
         time.sleep(1)
         encoder.reset_mock()

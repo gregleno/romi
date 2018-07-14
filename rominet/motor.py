@@ -2,12 +2,13 @@ from pid import PID
 
 
 class Motor(object):
+    # 1440 ticks per rev, 150 rev per min 60 sec per minute
     MAX_SPEED = float(1440 * 150 / 60.)
     MAX_ACCELERATION = MAX_SPEED / 10  # Max speed achieved in 10 iterations
     MAX_CMD = 400.
 
     def __init__(self):
-        self.pid_speed = PID(0.1, 5, 0, Motor.MAX_CMD)
+        self.pid_speed = PID(0.01, 0.9, 0, Motor.MAX_CMD)
         self.target_speed = 0
 
     @staticmethod

@@ -98,7 +98,7 @@ def rotate():
     if 'speed' not in request.json or type(request.json['speed']) is not int:
         abort(400)
     angle = request.json['angle'] * pi / 180.
-    speed = request.json['speed'] * pi / 180.
+    speed = request.json['speed']
     try:
         robot.rotate(angle, speed)
         return jsonify({})

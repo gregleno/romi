@@ -207,7 +207,7 @@ function turn_left() {
     $.ajax({
         url: "rominet/api/rotate",
         type: 'PUT',
-        data: JSON.stringify({ speed: 90, angle: -90 }),
+        data: JSON.stringify({ speed: 1, angle: -90 }),
         dataType: 'json',
         contentType: 'application/json; charset=utf-8'
     });
@@ -217,7 +217,7 @@ function turn_right() {
     $.ajax({
         url: "rominet/api/rotate",
         type: 'PUT',
-        data: JSON.stringify({ speed: 90, angle: 90 }),
+        data: JSON.stringify({ speed: 1, angle: 90 }),
         dataType: 'json',
         contentType: 'application/json; charset=utf-8'
     });

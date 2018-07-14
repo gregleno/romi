@@ -15,12 +15,12 @@ LED3 = (0, 0, 1)
 
 class Robot(object):
 
-    def __init__(self):
-        self.a_star = AStar()
+    def __init__(self, a_star=None):
+        self.a_star = a_star or AStar()
         self.encoders = Encoders(self.a_star)
         self.odometer = Odometer(self.encoders)
         self.motors = Motors(self.a_star, self.odometer)
-        # TODO: check if a camera is connected
+
         self.camera = Camera()
         self.log = logging.getLogger('romi')
 
@@ -65,7 +65,7 @@ class Robot(object):
         return self.odometer.get_situation().dist
 
     def get_speed(self):
-        return self.odometer.get_situation().velocity
+        return self.odometer.get_situation().dist
 
     def set_leds(self, red, yellow, green):
         self.a_star.leds(red, yellow, green)
@@ -91,7 +91,16 @@ class Robot(object):
             return False
 
     def rotate(self, angle, speed):
+        speed = self._cap(speed)
         self.motors.rotate(angle, speed)
 
     def move_forward(self, distance, speed):
+        speed = self._cap(speed)
         self.motors.move_forward(distance, speed)
+
+    def _cap(self, x):
+        if x > 1:
+            return 1
+        if x < -1:
+            return -1
+        return x

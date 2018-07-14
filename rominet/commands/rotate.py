@@ -10,7 +10,6 @@ class Rotate(Command):
         super(Rotate, self).__init__()
         self.yaw = yaw
         self.speed = speed
-        self.achieved = False
         self.pid_angle = PID(2, 0, 0, 2 * pi * 5)  # max 5 rotation per second
         self.pid_rotation_speed = PID(800, 3000, 0, max_abs_value=speed)
         self.last_speed_cmd = 0
