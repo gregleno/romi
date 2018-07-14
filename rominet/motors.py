@@ -68,24 +68,21 @@ class Motors(object):
         self.odometer.stop_tracking()
         self.reset_pids()
 
-    def _odom_measurement_callback(self, speed_left, speed_right, x, y, yaw, omega, dist,
-                                   current_time):
+    def _odom_measurement_callback(self, situation):
         command = self.command
         if command is not None and not command.is_achieved():
             set_point_speed_left, \
-                set_point_speed_right = command.get_motor_speeds(speed_left, speed_right,
-                                                                 x, y, yaw, omega,
-                                                                 dist, current_time)
+                set_point_speed_right = command.get_motor_speeds(situation)
             if command.is_achieved():
                 self.odometer.stop_tracking()
         else:
             set_point_speed_left = 0
             set_point_speed_right = 0
 
-        left_speed_cmd = self.pid_speed_left.get_output(set_point_speed_left, speed_left,
-                                                        current_time)
-        right_speed_cmd = self.pid_speed_right.get_output(set_point_speed_right, speed_right,
-                                                          current_time)
+        left_speed_cmd = self.pid_speed_left.get_output(set_point_speed_left, situation.speed_l,
+                                                        situation.current_time)
+        right_speed_cmd = self.pid_speed_right.get_output(set_point_speed_right, situation.speed_r,
+                                                          situation.current_time)
 
         # Make sure that we do not accelerate or decelerate too fast
         left_speed_cmd = self.cap_acceleration(left_speed_cmd, self.last_speed_cmd_left)

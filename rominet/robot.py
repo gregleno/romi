@@ -52,19 +52,20 @@ class Robot(object):
             time.sleep(0.4)
 
     def get_position_xy(self):
-        return self.odometer.get_position_xy()
+        situation = self.odometer.get_situation()
+        return situation.x, situation.y
 
     def get_encoders(self):
         return self.encoders.read_encoders()
 
     def get_yaw(self):
-        return self.odometer.get_yaw()
+        return self.odometer.get_situation().yaw
 
     def get_distance(self):
-        return self.odometer.get_distance()
+        return self.odometer.get_situation().dist
 
     def get_speed(self):
-        return self.odometer.get_speed()
+        return self.odometer.get_situation().velocity
 
     def set_leds(self, red, yellow, green):
         self.a_star.leds(red, yellow, green)

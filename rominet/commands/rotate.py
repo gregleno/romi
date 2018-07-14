@@ -15,12 +15,14 @@ class Rotate(Command):
         self.pid_rotation_speed = PID(800, 3000, 0, max_abs_value=speed)
         self.last_speed_cmd = 0
 
-    def get_motor_speeds(self, speed_left, speed_right, x, y, yaw, omega, distance, current_time):
-        if abs(degrees(yaw - self.yaw)) < 0.5:
+    def get_motor_speeds(self, situation):
+        if abs(degrees(situation.yaw - self.yaw)) < 0.5:
             self.achieved = True
             speed_cmd = 0
         else:
-            rotation_speed = get_yaw_delta(self.yaw, yaw, self.pid_angle, current_time)
-            speed_cmd = self.pid_rotation_speed.get_output(rotation_speed, omega, current_time)
+            rotation_speed = get_yaw_delta(self.yaw, situation.yaw, self.pid_angle,
+                                           situation.current_time)
+            speed_cmd = self.pid_rotation_speed.get_output(rotation_speed, situation.omega,
+                                                           situation.current_time)
 
         return speed_cmd, -speed_cmd

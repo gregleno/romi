@@ -12,5 +12,5 @@ class Speed(Command):
         self.speed_left = speed_left
         self.speed_right = speed_right
 
-    def get_motor_speeds(self, speed_left, speed_right, x, y, yaw, omega, distance, current_time):
+    def get_motor_speeds(self, situation):
         return self.speed_left, self.speed_right
