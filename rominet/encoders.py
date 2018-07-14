@@ -6,12 +6,10 @@ class Encoders(object):
         self.count_right = 0
         self.last_count_left = 0
         self.last_count_right = 0
-
-    def get_encoder_values(self):
-        return self.count_left, self.count_right
+        self._first_read_successful = False
 
     def read_encoders(self):
-        count_left, count_right = self.a_star.read_encoders()
+        count_left, count_right = self._read_from_astar()
 
         diff_left = (count_left - self.last_count_left) % 0x10000
         if diff_left >= 0x8000:
@@ -29,7 +27,9 @@ class Encoders(object):
 
         return self.count_left, self.count_right
 
-    def reset(self):
-        self.count_left = 0
-        self.count_right = 0
-        self.last_count_left, self.last_count_right = self.a_star.read_encoders()
+    def _read_from_astar(self):
+        count_left, count_right = self.a_star.read_encoders()
+        if not self._first_read_successful:
+            self.last_count_left, self.last_count_right = count_left, count_right
+            self._first_read_successful = True
+        return count_left, count_right

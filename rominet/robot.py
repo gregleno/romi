@@ -55,7 +55,7 @@ class Robot(object):
         return self.odometer.get_position_xy()
 
     def get_encoders(self):
-        return self.encoders.get_encoder_values()
+        return self.encoders.read_encoders()
 
     def get_yaw(self):
         return self.odometer.get_yaw()
