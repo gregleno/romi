@@ -9,3 +9,5 @@
 /rominet/static/._images
 romi.iml
 .cache
+cover
+.coverage

@@ -3,7 +3,11 @@ import struct
 import time
 import logging
 from multiprocessing import Lock
-import smbus
+
+try:
+    import smbus
+except ImportError:
+    smbus = None
 
 
 bus_lock = Lock()

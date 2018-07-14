@@ -10,4 +10,4 @@ install:
 before_script:
   - flake8 rominet
 script: 
-  - pytest
+  - nosetests-2.7 -c setup.cfg

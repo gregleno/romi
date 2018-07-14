@@ -2,9 +2,13 @@
 
 import logging
 import math
-import cwiid
 from wiiremote import WiiRemote
 from robot import Robot
+
+try:
+    import cwiid
+except ImportError:
+    cwiid = None
 
 
 class RobotWiiController(object):

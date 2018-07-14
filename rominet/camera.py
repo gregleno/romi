@@ -1,8 +1,12 @@
 import io
 import time
-from picamera import PiCamera
 import threading
 import os.path
+
+try:
+    from picamera import PiCamera
+except ImportError:
+    picamera = None
 
 
 class Camera(object):

@@ -2,7 +2,11 @@ from threading import Thread
 import time
 import logging
 import sys
-import cwiid
+
+try:
+    import cwiid
+except ImportError:
+    cwiid = None
 
 
 class WiiRemote(object):

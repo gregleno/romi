@@ -15,16 +15,16 @@ setup(name='rominet',
       license='GPLv3',
       packages=find_packages(),
       entry_points={
-        'console_scripts': ['rominet-service=rominet.service:main'],
+          'console_scripts': ['rominet-service=rominet.service:main'],
       },
       install_requires=[
-       'pytest-runner'
+          'pytest-runner'
       ],
       test_suite='pytest',
       tests_require=['pytest'],
       zip_safe=False,
       package_data={
           'rominet': ['rominet/templates/**/*',
-		      'rominet/static/**/*.js']
+                      'rominet/static/**/*.js']
       },
       include_package_data=True)
