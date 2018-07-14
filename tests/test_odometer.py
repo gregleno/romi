@@ -23,6 +23,17 @@ class TestOdometer(unittest.TestCase):
         encoder.reset_mock()
         encoder.read_encoders.assert_not_called()
 
+    def test_callback(self):
+        encoder = mock.MagicMock(spec=Encoders)
+        encoder.read_encoders.return_value = 0, 0
+        odom = Odometer(encoder)
+        callback = mock.MagicMock()
+        odom.add_measurement_callback(callback.call_back)
+        odom.track_odometry()
+        time.sleep(0.1)
+
+        callback.call_back.assert_called()
+
     def test_distance(self):
         encoder = mock.MagicMock(spec=Encoders)
         encoder.read_encoders.return_value = 0, 0

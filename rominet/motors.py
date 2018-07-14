@@ -25,7 +25,7 @@ class Motors(object):
         self.last_send_left = -1000
         self.last_send_right = -1000
         self.a_star.motors(0, 0)
-        self.odometer.set_odom_measurement_callback(self._odom_measurement_callback)
+        self.odometer.add_measurement_callback(self._odom_measurement_callback)
         self.log = logging.getLogger('romi')
 
     @staticmethod

@@ -26,7 +26,7 @@ class Odometer(object):
         self.thread = None
         self.tracking = Event()
         self.tracking.clear()
-        self.odom_measurement_callback = None
+        self.odom_measurement_callback = []
         self.freq = 50
         self.last_count_left = 0
         self.last_count_right = 0
@@ -76,13 +76,13 @@ class Odometer(object):
         self.last_count_left = encoder_left
         self.last_count_right = encoder_right
 
-        if self.odom_measurement_callback is not None:
-            self.odom_measurement_callback(situation)
+        for cb in self.odom_measurement_callback:
+            cb(situation)
 
         return has_moved
 
-    def set_odom_measurement_callback(self, cb):
-        self.odom_measurement_callback = cb
+    def add_measurement_callback(self, cb):
+        self.odom_measurement_callback.append(cb)
 
     def reset_odometry(self):
         self.fifo.clear()
