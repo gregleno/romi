@@ -21,7 +21,10 @@ class Motor(object):
 
     def set_speed(self, target_speed):
         if abs(target_speed) > 1:
-            raise ValueError("The absolute value of target_speed cannot be greater than 1")
+            print(target_speed)
+            raise ValueError("The absolute value of target_speed "
+                             "cannot be greater than 1, was: {}".format(target_speed))
+
         self.target_speed = self.convert_command_to_speed(target_speed)
 
     def get_speed_command(self, speed_measurement, time_of_measurement):

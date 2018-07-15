@@ -6,7 +6,6 @@
 /build/
 **/*.DS_Store
 .idea
-/rominet/static/._images
 romi.iml
 .cache
 cover

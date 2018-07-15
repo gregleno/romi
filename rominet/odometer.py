@@ -19,11 +19,9 @@ DISTANCE_PER_TICK_MM = .152505
 
 
 class Odometer(object):
-    thread = None
 
-    def __init__(self, encoders):
+    def __init__(self, encoders, start_tracking_thread=True):
         self.encoders = encoders
-        self.thread = None
         self.tracking = Event()
         self.tracking.clear()
         self.odom_measurement_callback = []
@@ -34,14 +32,13 @@ class Odometer(object):
         self.fifo = deque(maxlen=1000)
         self.fifo.appendleft(Situation(0, 0, 0, 0, 0, 0, 0, 0, 0))
 
-        if Odometer.thread is None:
+        if start_tracking_thread:
             thread = Thread(target=self._tracking_thread)
             thread.daemon = True
             thread.start()
 
-    def _update(self):
+    def update(self, current_time):
         encoder_left, encoder_right = self.encoders.read_encoders()
-        current_time = time.time()
 
         last_situation = self.fifo[0]
 
@@ -98,7 +95,7 @@ class Odometer(object):
         self.reset_odometry()
         while True:
             current_time = time.time()
-            if self._update():
+            if self.update(current_time):
                 last_move_time = current_time
             elif current_time - last_move_time > 1:
                 self.tracking.wait()

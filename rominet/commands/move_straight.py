@@ -1,6 +1,6 @@
 from rominet.pid import PID
 from rominet.commands.command import Command
-from rominet.commands.utils import get_yaw_delta
+from rominet.commands.utils import get_yaw_delta, cap
 
 
 class MoveStraight(Command):
@@ -29,7 +29,7 @@ class MoveStraight(Command):
         if speed_cmd < 0:
             delta = -delta
 
-        speed_left = speed_cmd * (1 + delta / 2.)
-        speed_right = speed_cmd * (1 - delta / 2.)
+        speed_left = cap(speed_cmd * (1 + delta / 2.), 1)
+        speed_right = cap(speed_cmd * (1 - delta / 2.), 1)
 
         return speed_left, speed_right
